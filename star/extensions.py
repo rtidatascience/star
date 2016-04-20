@@ -9,10 +9,14 @@ from flask.ext.assets import Environment, Bundle
 
 assets = Environment()
 
-js = Bundle('vendor/jquery-2.2.0.js', 'vendor/theme-dashboard/dist/toolkit.js',
-            'vendor/jquery.color-2.1.2.js', 'app.js',
+js = Bundle('vendor/jquery-2.2.0.js',
+            'vendor/jquery.color-2.1.2.js',
+            'vendor/bootstrap/js/bootstrap.js',
+            'app.js',
             filters='rjsmin', output='gen/packed.js')
-css = Bundle('vendor/theme-dashboard/dist/toolkit-light.css', 'style.css', filters='cssmin',
+css = Bundle('vendor/bootstrap/css/bootstrap.css',
+             'vendor/bootstrap/css/bootstrap-theme.css',
+             'style.css', filters='cssmin',
              output='gen/packed.css')
 assets.register('js_all', js)
 assets.register('css_all', css)
