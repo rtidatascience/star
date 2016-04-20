@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+{% import "_forms.html" as forms %}
+
+{% block instructions %}
+    <p>
+        There are multiple cities that match your entry. Please pick one or
+        <a href="{{ url_for('star.location') }}">start over</a> to enter
+        different text.
+    </p>
+{% endblock %}
+
+{% block form %}
+    <h2 class="text-primary">Step 1: Choose your city</h2>
+
+    {% if error -%}
+        <div class="alert alert-danger" role="alert">{{ error }}</div>
+    {%- endif %}
+
+    <form action="{{ url_for("star.location") }}" method="POST">
+        <div class="form-group">
+            {{ forms.select(locations, "location", "location_select", size=7) }}
+        </div>
+
+        <button type="submit" class="btn btn-default">
+            Choose your location
+        </button>
+    </form>
+
+    <h2 class="text-muted">Step 2: Upload your traffic stop records</h2>
+    <h2 class="text-muted">Step 3: Select the right columns from your
+        records</h2>
+    <h2 class="text-muted">Step 4: Pick your target group</h2>
+{% endblock %}

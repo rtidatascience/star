@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+{% import "_forms.html" as forms %}
+
+{% block instructions %}
+    <p>
+        Pick the group within your target column that you want to examine for
+        possible disproportionality.
+    </p>
+{% endblock %}
+
+{% block form %}
+    {% include "_step_1_success.html" %}
+    {% include "_step_2_success.html" %}
+    {% include "_step_3_success.html" %}
+
+    <h2 class="text-primary">Step 4: Pick your target group</h2>
+    <div class="row">
+        <form action="{{ url_for("star.options") }}" method="POST">
+            <div class="col-md-9 col-sm-12">
+                <div class="form-group">
+                    <label for="target_group_input">Target group</label>
+                    {{ forms.select(target_opts, "target_group", "target_group_input") }}
+                    <p class="help-block">
+                        Choose the group that is most likely to be
+                        disproportionally stopped.
+                    </p>
+                </div>
+                <div class="checkbox">
+                    <label for="dst_restrict_input">
+                        <input type="checkbox" name="dst_restrict"
+                               id="dst_restrict_input">Restrict dates to +/- 30
+                        days from Daylight Savings Time start and end
+                    </label>
+                    <p class="help-block">This ensures that the periods analyzed
+                        have roughly equal amounts of daytime and nighttime.
+                        Most years, this is mid-February to mid-April and the
+                        beginning of October to the end of November.</p>
+                    <p class="help-block">
+                        Selecting this option takes advantage of the large shift
+                        in the relationship between lighting and clock time
+                        caused by daylight savings time. Selecting this option
+                        will severely reduce the number of cases analyzed.
+                        Consider using this option as a sensitivity test.
+                    </p>
+                </div>
+                <p>
+                    <button type="submit" class="btn btn-default">Analyze your
+                        records
+                    </button>
+                </p>
+                <p class="text-danger">
+                    This step may take several minutes to run, depending on the
+                    size of your file.
+                </p>
+            </div>
+        </form>
+    </div>
+
+    <h2 class="text-muted">Step 5: See your analysis</h2>
+{% endblock %}

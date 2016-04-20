@@ -1,0 +1,191 @@
+{% extends "layout.html" %}
+{% import "_forms.html" as forms %}
+
+{% block instructions %}
+    <p>
+        Columns in the CSV we used for your analysis:
+    </p>
+    <dl>
+        <dt>datetime</dt>
+        <dd>The date and time of the traffic stop</dd>
+        <dt>original_target</dt>
+        <dd>The data from the column you specified as your target column.</dd>
+        <dt>target</dt>
+        <dd>
+            0 if the stop was not in the group you were checking for profiling,
+            1 if the stop was in the group.
+        </dd>
+        <dt>light</dt>
+        <dd>0 if the stop was at dark, 1 if it was during the light.</dd>
+        <dt>year</dt>
+        <dd>The year of the traffic stop.</dd>
+        <dt>day_of_week</dt>
+        <dd>The day of the week of the stop, from 1 for Sunday to 7 for
+            Saturday.
+        </dd>
+        <dt>time_in_seconds</dt>
+        <dd>The number of seconds since the midnight before the stop.</dd>
+        {% if session['columns']['officer_id_column'] %}
+            <dt>officerid</dt>
+            <dd>The ID of the officer making the stop.</dd>
+        {% endif %}
+    </dl>
+{% endblock %}
+
+{% block form %}
+    {% include "_step_1_success.html" %}
+    {% include "_step_2_success.html" %}
+    {% include "_step_3_success.html" %}
+    {% include "_step_4_success.html" %}
+
+    <h2 class="text-primary">Step 5: See your analysis</h2>
+
+    {% if results.error %}
+        <p class="text-danger">{{ results.error }}</p>
+    {% else %}
+        {% if results.p_value_day < 0.05 %}
+            <p>
+                Based on statistical significance alone (p<0.05), this evidence
+                suggests there <em>may</em> be racial disproportionality in
+                traffic stops;
+                in-depth analysis of the data is recommended.  All estimates are
+                sensitive to model specification and the user may wish to
+                perform
+                additional analysis. Given the typically large sample sizes
+                available for traffic stop data, we recommend that
+                interpretation
+                of results be more focused on whether the size of the difference
+                in the reported percentages (or, equivalently, their ratio) is
+                meaningfully large for your community.
+            </p>
+        {% else %}
+            <p>
+                Based on statistical significance alone (p>=0.05), this evidence
+                does not
+                suggest the existence of racial disproportionality in traffic
+                stops.
+                However, given the typically large sample sizes available for
+                traffic stop data,
+                we recommend that interpretation of results be more focused on
+                whether the size
+                of the difference in the reported percentages (or, equivalently,
+                their ratio)
+                is meaningfully large for your community.
+            </p>
+        {% endif %}
+
+        <p>
+            The regression model indicates that the risk of being in the
+            reference group was
+            {{ "%.2f%%" | format(results.light_prob) }}
+            during the light portion of the intertwilight period and
+            {{ "%.2f%%" | format(results.dark_prob) }}
+            during the dark portion of the intertwilight period, with a
+            corresponding risk ratio of
+            {{ "%.2f" | format(results.risk_ratio_day) }}. The p-value for the
+            effect of light
+            versus dark was
+            {{ "%.4f" | format(results.p_value_day) }}.
+        </p>
+
+        <dl>
+            <dt>Date and time analysis was run</dt>
+            <dd>{{ datetime }}</dd>
+            <dt>Original filename</dt>
+            <dd>{{ original_filename }}</dd>
+            <dt>Date range of cases</dt>
+            <dd>{{ date_range }}</dd>
+            <dt>Intertwilight period (ITP) range</dt>
+            <dd>{{ itp_range }}</dd>
+            <dt>Original number of stop records</dt>
+            <dd>{{ "{:,d}".format(original_record_count) }}</dd>
+            <dt>Number of stop records used for analysis</dt>
+            <dd>{{ "{:,d}".format(final_record_count) }}</dd>
+            <dt>Number of daylight events in ITP</dt>
+            <dd>{{ light_count }}</dd>
+            <dt>Number of darkness events in ITP</dt>
+            <dd>{{ dark_count }}</dd>
+        </dl>
+
+
+        <p>
+            <a href="{{ url_for("star.download") }}">
+                Download the CSV we used for your analysis.
+            </a>
+        </p>
+
+        <h3>Get an email of your report</h3>
+
+        <p>Would you like to get an email of your report? Enter your email
+            below.</p>
+
+        <div class="row">
+            <div class="col-md-6 col-sm-9 col-xs-12">
+                <form action="{{ url_for('star.email') }}" method="POST">
+                    <div class="form-group">
+                        <label for="email_input">Email</label>
+                        <input type="email" class="form-control"
+                               required="required"
+                               id="email_input"
+                               name="email"/>
+                    </div>
+                    <div class="checkbox">
+                        <label for="optin_input">
+                            <input type="checkbox" id="optin_input" name="optin"
+                                   checked="checked" />
+                            I would like to receive follow-up emails from RTI
+                            about criminal justice.
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label for="title_input">Title (optional)</label>
+                        <input type="text" class="form-control"
+                               id="title_input"
+                               name="title"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="name_input">Name (optional)</label>
+                        <input type="text" class="form-control"
+                               id="name_input"
+                               name="name"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="organization_input">Organization (optional)</label>
+                        <input type="text" class="form-control"
+                               id="organization_input"
+                               name="organization"/>
+                    </div>
+                    <p>
+                        <button type="submit" class="btn btn-default">
+                            Get your report
+                        </button>
+                    </p>
+                </form>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="panel panel-default">
+        <div class="panel-heading">How we calculated your results</div>
+        <div class="panel-body">
+            <p>Traffic stop profiling analysis was performed using Python 3.5.1
+                and statsmodels version 0.6.1.</p>
+
+            <p>For analysis with an officer id, a marginal regression model was
+                fit using Generalized Estimating Equations (GEE). Default
+                initialization parameters were used with the exceptions of a
+                logit link, binomial distribution and an exchangeable covariance
+                structure with a robust variance estimator. The fitted model
+                included categorical variables representing light/dark, day of
+                week, year and a B-spline (degree = 6) of time in
+                seconds since midnight. Officer id was specified as the group
+                (cluster or "subject" variable).</p>
+
+            <p>For analysis without an officer id a binary choice logit model
+                was fit. The form of the model was identical to the GEE model
+                but no within-subject covariance structure was specified.</p>
+        </div>
+    </div>
+
+
+{% endblock %}

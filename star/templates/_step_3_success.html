@@ -1,0 +1,28 @@
+<h2 class="text-success">
+    Step 3: Select the right columns from your records
+    <small><a id="change_columns" href="{{ url_for("star.columns") }}">Change</a></small>
+</h2>
+
+<p>
+    <strong>Date and time columns</strong>
+    <span>
+    {% if session["columns"]["datetime_columns"]["__datetime"] -%}
+        {{ ", ".join(session["columns"]["datetime_columns"]["__datetime"]) }}
+    {%- else -%}
+        {{ session["columns"]["datetime_columns"][0] }}
+    {%- endif %}
+    </span>
+</p>
+
+<p>
+    <strong>Target column</strong>
+    <span>{{ session["columns"]["target_column"] }}</span>
+</p>
+
+{% if session['columns']['officer_id_column'] %}
+<p>
+    <strong>Officer ID column</strong>
+    <span>{{ session["columns"]["officer_id_column"] }}</span>
+</p>
+{% endif %}
+

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>RTI-STAR Report</title>
+    <style type="text/css" media="screen,print">
+        body {
+            font-family: "Arial", sans-serif;
+        }
+
+        .break {
+            display: block;
+            clear: both;
+            page-break-after: always;
+        }
+
+    </style>
+</head>
+<body>
+<img src="{{ "file://" + root_dir + "/static/RTI_logo_blue.gif" }}"
+     style="float: right; margin-top: -10px;"/>
+<h1>RTI-STAR Report</h1>
+
+<div>
+    <div>
+        <strong>Report generated at:</strong> {{ datetime }}
+    </div>
+    <div>
+        <strong>Original filename:</strong> {{ original_filename }}
+    </div>
+    <div>
+        <strong>Columns used</strong>:<br />
+        <blockquote>
+            <em>Date and time</em>:
+            {% if cols["datetime_columns"]["__datetime"] -%}
+                {{ ", ".join(cols["datetime_columns"]["__datetime"]) }}
+            {%- else -%}
+                {{ cols["datetime_columns"][0] }}
+            {%- endif %}
+            <br/>
+            <em>Time</em>: {{ cols['time_column'] }}<br/>
+            <em>Target</em>: {{ cols['target_column'] }}<br/>
+            <em>Officer ID</em>: {{ cols['officer_id_column'] or "None" }}<br/>
+        </blockquote>
+    </div>
+    <div>
+        <strong>Target group</strong>: {{ options['target_group'] }}
+    </div>
+    <div>
+        <strong>Restrict dates to +/- 30 days from DST transition:</strong>&nbsp;
+        {% if options["dst_restrict"] %}
+        True
+        {% else %}
+        False
+        {% endif %}
+    </div>
+    <div>
+        <strong>Date range of cases:</strong> {{ date_range }}</div>
+    <div>
+        <strong>Intertwilight period (ITP) range:</strong> {{ itp_range }}
+    </div>
+    <div>
+        <strong>Original number of stop records:</strong> {{ "{:,d}".format(original_record_count) }}
+    </div>
+    <div>
+        <strong>Number of stop records used for analysis:</strong> {{ "{:,d}".format(final_record_count) }}
+    </div>
+    <div>
+        <strong>Number of daylight events in ITP:</strong> {{ light_count }}
+    </div>
+    <div>
+        <strong>Number of darkness events in ITP:</strong> {{ dark_count }}
+    </div>
+</div>
+
+{% if results.p_value_day < 0.05 %}
+    <p>
+        Based on statistical significance alone (p<0.05), this evidence
+        suggests there <em>may</em> be racial disproportionality in
+        traffic stops;
+        in-depth analysis of the data is recommended.  All estimates are
+        sensitive to model specification and the user may wish to
+        perform
+        additional analysis. Given the typically large sample sizes
+        available for traffic stop data, we recommend that
+        interpretation
+        of results be more focused on whether the size of the difference
+        in the reported percentages (or, equivalently, their ratio) is
+        meaningfully large for your community.
+    </p>
+{% else %}
+    <p>
+        Based on statistical significance alone (p>=0.05), this evidence
+        does not
+        suggest the existence of racial disproportionality in traffic
+        stops.
+        However, given the typically large sample sizes available for
+        traffic stop data,
+        we recommend that interpretation of results be more focused on
+        whether the size
+        of the difference in the reported percentages (or, equivalently,
+        their ratio)
+        is meaningfully large for your community.
+    </p>
+{% endif %}
+
+<p>
+    The regression model indicates that the risk of being in the
+    reference group was
+    {{ "%.2f%%" | format(results.light_prob) }}
+    during the light portion of the intertwilight period and
+    {{ "%.2f%%" | format(results.dark_prob) }}
+    during the dark portion of the intertwilight period, with a
+    corresponding risk ratio of
+    {{ "%.2f" | format(results.risk_ratio_day) }}. The p-value for the
+    effect of light
+    versus dark was
+    {{ "%.4f" | format(results.p_value_day) }}.
+</p>
+
+<div class="break"></div>
+
+<h3>Methodology</h3>
+
+<p>
+    To study the racial distribution of traffic stops, the tool uses
+    the Veil of Darkness (VOD) approach, which is based on the logic
+    that police officers are less capable of determining the race of
+    a motorist after dark than they are during daylight. Using this
+    method, the existence of racial disproportionality in traffic
+    stops is assessed by comparing the race distribution of stops
+    made during daylight to the race distribution of stops made
+    after dark, after adjusting for other factors in a regression
+    model. The analysis is limited to stops that occur during the
+    evening intertwilight period (roughly between 5:00 PM and 9:00
+    PM, depending on location) in order to reduce the variation in
+    travel patterns that are conditional on time of day.
+</p>
+
+<p>
+    The VOD method was developed and first employed by Jeffery
+    Grogger and Greg Ridgeway in an analysis of traffic stops in
+    Oakland, California, and Cincinnati, Ohio. The method has also
+    been used in studies focusing on the nature of traffic stops in
+    Minneapolis, Minnesota, Syracuse, New York, and more recently in
+    San Diego, California, and the state of Connecticut.
+</p>
+
+<p>
+    Our tool incorporates one enhancement from these previous
+    studies.  That is, our model accounts for within-officer
+    correlation that is likely to occur (when this information is
+    available in the data). By doing so, we recognize that officers
+    may have inherent differences in the percentage of a racial or
+    ethnic subset of the population that they are likely to
+    encounter. These differences may be caused by factors such as
+    geographic deployment or unit assignment.
+</p>
+
+<h3>How to interpret results</h3>
+
+<p>
+    One benefit of the VOD approach is its statistical
+    quantification of
+    disproportionality present in a community using a reliable data
+    source.  If the reported <strong>risk ratio</strong> (i.e., risk
+    of being in a
+    traffic stop reference group during light vs. dark periods) is
+    acceptably close to 1.0, or in other words if the
+    <strong>percentages</strong>
+    of
+    reference group traffic stops during light vs. dark
+    intertwilight
+    are acceptably close to one another, it suggests that daylight
+    was
+    not meaningfully associated with the race or ethnicity of the
+    driver
+    who was stopped.  Alternatively, if the risk ratio is
+    meaningfully
+    <em>greater than 1.0</em>, it suggests possible racial
+    disproportionality
+    (i.e., that reference group motorists, a racial or ethnic subset
+    of
+    the population of interest, are more likely to be among those
+    stopped during times when visibility is higher compared to times
+    when visibility is lower).
+</p>
+
+<p>
+    We provide the <strong>level of statistical
+    significance</strong> for the effect of daylight vs.
+    intertwilight as well.  Significance levels between 0 and 0.05
+    (when accompanied
+    by risk ratios <em>greater than 1.0</em>) are more indicative of
+    a potential problem with
+    disproportionality, and significance levels between 0.05 and 1.0
+    are less
+    indicative of a potential problem.  However, given the large
+    sample sizes
+    available for traffic stop data, interpretation of results
+    should be more
+    focused on the size of the difference in the percentages (or,
+    equivalently,
+    their ratio).
+</p>
+<p>
+    This tool provides a quantified description of traffic stop
+    disparities in a community. The results can be useful in a
+    number
+    of ways: to determine whether there is meaningful evidence of
+    racial disproportionality in traffic stops for a given reference
+    group, to compare results across various subgroups of stops
+    (e.g.,
+    across gender, across police units) to pinpoint subgroups that
+    need
+    more attention than others, and to compare results before vs.
+    after
+    an intervention is implemented. 
+</p>
+<p>
+    This method identifies patterns of disproportionate contact with
+    law enforcement in regard to traffic stops for selected reference
+    groups in a defined time range. This tool does <strong>not</strong>
+    alone conclusively
+    identify agencies and/or officers that are engaging in the
+    practice of racial bias. Finally, this method does not analyze or provide
+    context for the reason or cause for a traffic stop or set of
+    traffic stops to be conducted by a law enforcement officer.
+</p>
+<p>
+    This tool does not provide a customized analysis for each
+    dataset and results should be considered preliminary. Further analyses
+    may still be warranted to better understand the results and verify
+    that the preliminary analysis has been conducted in a proper and
+    legitimate manner.
+</p>
+
+<h3>How we calculated your results</h3>
+
+<p>Traffic stop profiling analysis was performed using Python 3.5.1
+    and statsmodels version 0.6.1.</p>
+
+<p>For analysis with an officer id, a marginal regression model was
+    fit using Generalized Estimating Equations (GEE). Default
+    initialization parameters were used with the exceptions of a
+    logit link, binomial distribution and an exchangeable covariance
+    structure with a robust variance estimator. The fitted model
+    included categorical variables representing light/dark, day of
+    week, year and a B-spline (degree = 6) of time in
+    seconds since midnight. Officer id was specified as the group
+    (cluster or "subject" variable).</p>
+
+<p>For analysis without an officer id a binary choice logit model
+    was fit. The form of the model was identical to the GEE model
+    but no within-subject covariance structure was specified.</p>
+
+</body>
+</html>

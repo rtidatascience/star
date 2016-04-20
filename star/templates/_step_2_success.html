@@ -1,0 +1,8 @@
+<h2 class="text-success">
+    Step 2: Upload your traffic stop records
+    <small><a id="change_upload" href="{{ url_for('star.upload') }}">Change</a></small>
+</h2>
+
+<p>
+    {{ session["original_filename"] }}, {{ "{:,d}".format(session["record_count"]) }} records
+</p>

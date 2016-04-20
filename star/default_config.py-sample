@@ -1,0 +1,11 @@
+GOOGLE_MAPS_API_KEY = "SOME-API_KEY"
+SENTRY_DSN = "https://username:password@app.getsentry.com/appnum"
+MAIL_SERVER = 'localhost'
+MAIL_PORT = 1025
+MAIL_USE_TLS = False
+MAIL_USE_SSL = False
+MAIL_DEBUG = True
+MAIL_USERNAME = None
+MAIL_PASSWORD = None
+MAIL_DEFAULT_SENDER = 'trafficstops@example.org'
+DATABASE = "/tmp/star.sqlite3"

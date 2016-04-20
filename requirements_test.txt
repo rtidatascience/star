@@ -1,0 +1,8 @@
+-r requirements.txt
+
+pytest
+splinter
+pytest-flask
+pytest-splinter
+selenium
+vcrpy
