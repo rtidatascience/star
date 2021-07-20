@@ -1,0 +1,7 @@
+services:
+  app:
+    build: .
+    ports:
+      - "0.0.0.0:5000:5000"
+    volumes:
+      - .:/app

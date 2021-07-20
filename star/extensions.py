@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """Extensions module."""
 
-from flask.ext.appconfig import AppConfig
+from flask_appconfig import AppConfig
 
 config = AppConfig()
 
-from flask.ext.assets import Environment, Bundle
+from flask_assets import Environment, Bundle
 
 assets = Environment()
 
