@@ -40,6 +40,6 @@
     <h2 class="text-muted">Step 4: Pick your target group</h2>
     <h2 class="text-muted">Step 5: See your analysis</h2>
     <script src="{{ url_for('static', filename="location.js") }}"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key={{ config.GOOGLE_MAPS_API_KEY }}&signed_in=true&libraries=places&callback=initAutocomplete"
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ config.GOOGLE_MAPS_API_KEY }}&libraries=places&callback=initAutocomplete"
             async defer></script>
 {% endblock %}
