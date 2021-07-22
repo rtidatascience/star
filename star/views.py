@@ -436,7 +436,7 @@ def email():
     mail.send(msg)
 
     flash("Your email has been sent.")
-    raise RequestRedirect(url_for('star.analyze'))
+    return redirect(url_for('star.analyze'))
 
 
 def flash_errors(form, category="warning"):

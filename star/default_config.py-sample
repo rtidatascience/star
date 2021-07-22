@@ -9,3 +9,10 @@ MAIL_USERNAME = None
 MAIL_PASSWORD = None
 MAIL_DEFAULT_SENDER = 'trafficstops@example.org'
 DATABASE = "/tmp/star.sqlite3"
+
+# GOOGLE_MAPS_API_KEY needs the following APIs enabled:
+# Geocoding API
+# Maps Elevation API
+# Maps JavaScript API
+# Places API
+# Time Zone API

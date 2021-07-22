@@ -11,7 +11,18 @@ Quickstart
 You need a `default_config.py` file under `star/`. See 
 `star/default_config.py-sample` for an example.
 
-Run the following commands to bootstrap your environment.
+### Docker
+
+Run the following commands to have your environment in a Docker container.
+
+```
+docker-compose build
+docker-compose up
+```
+
+The `MANAGE_ARG` parameter is passed to the `python manage.py` command (defaults to `server`)
+
+Or, run the following commands to bootstrap your environment.
 
 ```
 pip install -r requirements.txt

@@ -208,7 +208,7 @@ class VODModel:
         min_twilight = min(dusks)
         max_twilight = max(dusks)
 
-        df = df.ix[
+        df = df.iloc[
             df.index.indexer_between_time(min_twilight,
                                           max_twilight,
                                           include_end=True)]
@@ -225,7 +225,7 @@ class VODModel:
             min_year = max_year - 5
         min_twilight, max_twilight = self.find_twilight_range(min_year,
                                                               max_year)
-        df = df.ix[
+        df = df.iloc[
             df.index.indexer_between_time(min_twilight,
                                           max_twilight,
                                           include_end=True)]
