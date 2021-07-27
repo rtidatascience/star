@@ -49,9 +49,9 @@ class EmptyModel(Exception):
 class VODModel:
     def __init__(self, data_frame, location, columns, options):
         self.location = Location(**location)
-        self.dst_restrict = bool(options.get("dst_restrict"))
-        self.target_column = columns["target_column"]
-        self.target_group = options["target_group"]
+        self.dst_restrict = bool(options.get("dst_restrict")) # Restrict dates to +/- 30 days from Daylight Savings Time start and end 
+        self.target_column = columns["target_column"] # column containing the group you wish to check for possible profiling
+        self.target_group = options["target_group"] # value within the target column representing the possible profiled 
         self.officer_id_column = columns.get("officer_id_column")
         self.datetime_column = columns["datetime_column"]
         self.data_frame = self.generate_data_frame(data_frame, debug=True)
@@ -64,7 +64,7 @@ class VODModel:
     def find_twilight_range(self, start_year=None, stop_year=None):
         if start_year is None or stop_year is None:
             df = self.data_frame
-            years = pd.unique(df.datetime.dropna().apply(lambda dt: dt.year))
+            years = pd.unique(df.datetime.dropna().apply(lambda dt: dt.year)) # gets the unique list of years in the data
             min_year = min(years)
             max_year = max(years)
             if min_year > max_year - 5:
@@ -74,7 +74,7 @@ class VODModel:
             if stop_year is None:
                 stop_year = max_year
 
-        solstice_dates = [{"month": 6, "day": 20}, {"month": 12, "day": 21}]
+        solstice_dates = [{"month": 6, "day": 20}, {"month": 12, "day": 21}] # most commonly on these dates, is this close enough? possible options: https://stackoverflow.com/questions/704108/how-do-i-compute-equinox-solstice-moments
         twilights = []
         for year in range(start_year, stop_year + 1):
             for date in solstice_dates:
