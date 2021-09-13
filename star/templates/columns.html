@@ -1,6 +1,10 @@
 {% extends "layout.html" %}
 {% import "_forms.html" as forms %}
-
+{% block progress %}
+<div class="progress mb-2" style="height: 25px;">
+    <div class="progress-bar px-3 text-end fs-6" role="progressbar" style="width: 50%;" aria-valuenow=50" aria-valuemin="0" aria-valuemax="100">50%</div>
+</div>
+{% endblock %}
 {% block instructions %}
     <p>
         Now choose the columns in your records that we need for analysis. If you
@@ -38,19 +42,18 @@
     {% include "_step_1_success.html" %}
     {% include "_step_2_success.html" %}
 
-    <h2 class="text-primary">Step 3: Select the right columns from your
-        records</h2>
+    <h2 class="text-primary">Step 3: Select Columns From Your Records</h2>
 
     {% if error -%}
-        <div class="alert alert-danger">{{ error }}</div>
+        <div class="alert alert-danger" style="font-size: 1rem;">{{ error }}</div>
     {%- endif %}
 
-    <h3>Preview your records</h3>
+    <label class="fs-5 fw-bold">Preview your records</label>
 
     {% if cols|length > 12 -%}
         <p>Your records have too many columns to preview.</p>
     {% else %}
-        <table class="table table-striped table-condensed table-hover">
+        <table class="mt-4 table table-striped table-condensed table-hover fs-6">
             <thead>
             <tr>
                 {% for col in cols %}
@@ -69,58 +72,75 @@
             </tbody>
         </table>
     {% endif %}
-
-    <form action="{{ url_for('star.columns') }}" method="POST">
-        <h3>Select columns</h3>
-
+    <form action="{{ url_for('star.columns') }}" class="border-top mt-4 pt-3" method="POST" id="form-columns">
         <div class="row">
-            <div class="col-md-6 col-sm-9 col-xs-12">
-                <div class="form-group">
-                    <label for="date_column_input">Date column</label>
-                    {{ forms.select(cols, "date_column", "date_column_input") }}
-                </div>
-                <div class="form-group">
-                    <label for="time_column_input">Time column</label>
-                    {{ forms.select(cols, "time_column", "time_column_input") }}
-                    <p class="help-block">If you have one datetime column,
-                        select it for
-                        both date and time.</p>
-                </div>
-                <div class="form-group">
-                    <label for="target_column_input">Column to check</label>
-                    {{ forms.select(cols, "target_column", "target_column_input") }}
-                    <p class="help-block">This column contains the group you
-                        wish to
-                        check for possible profiling.</p>
-                </div>
-                <div class="form-group">
-                    <label for="target_column_input">Officer ID</label>
-                    <select class="form-control" name="officer_id_column"
-                            id="officer_id_input">
-                        <option value="">I do not have an officer ID column
-                        </option>
-                        {% for col in cols -%}
-                            <option value="{{ col }}">{{ col }}</option>
-                        {%- endfor %}
-                    </select>
-                    <p class="help-block">
-                        This column is optional.
-                    </p>
-                </div>
-                <p>
-                    <button type="submit" class="btn btn-default">Submit your
-                        selections
-                    </button>
-                </p>
-                <p class="text-danger">
-                    This step may take several minutes to run, depending on the
-                    size of your file and the format of your dates and times.
+            <p class="my-4 fs-6">Now choose the columns in your records that we need for analysis. If you
+                have one column with both date and time, select it for both date and
+                time.</p>
+            <button type="button" class="d-flex align-items-center btn text-primary fs-6 fw-bold mb-2" data-bs-toggle="modal" data-bs-target="#instructionsModal">
+                <span>Click here to view acceptable formats for dates.</span>
+            </button>
+            <div class="form-group">
+                <label class="fs-5 fw-bold" for="date_column_input">Date column</label>
+                {{ forms.select(cols, "date_column", "date_column_input") }}
+            </div>
+            <div class="form-group">
+                <label class="fs-5 fw-bold" for="time_column_input">Time column</label>
+                {{ forms.select(cols, "time_column", "time_column_input") }}
+                <p class="help-block fs-6 mt-1 mb-4">If you have one datetime column,
+                    select it for
+                    both date and time.</p>
+            </div>
+            <div class="form-group">
+                <label class="fs-5 fw-bold" for="target_column_input">Column to check</label>
+                {{ forms.select(cols, "target_column", "target_column_input") }}
+                <p class="help-block fs-6 mt-1 mb-4">This column contains the group you
+                    wish to
+                    check for possible profiling.</p>
+            </div>
+            <div class="form-group">
+                <label class="fs-5 fw-bold" for="target_column_input">Officer ID</label>
+                <select class="form-select my-3" name="officer_id_column"
+                        id="officer_id_input">
+                    <option value="">I do not have an officer ID column
+                    </option>
+                    {% for col in cols -%}
+                        <option value="{{ col }}">{{ col }}</option>
+                    {%- endfor %}
+                </select>
+                <p class="help-block fs-6 mt-1 mb-2">
+                    Officer ID can be helpful to detect disproportionality, but is not necessary.
                 </p>
             </div>
+            <p>
+                <button type="submit" class="btn btn-primary">Submit Your Selections</button>
+            </p>
+            <div id="spinner" style="display: none;">
+                <div class="spinner-border text-info" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <span style="margin-left: 10px;">Analyzing...</span>
+            </div>
+            <p class="text-danger fs-6 mt-2">
+                Note: This step may take several minutes to run, depending on the
+                size of your file and the format of your dates and times.
+            </p>
         </div>
     </form>
 
-    <h2 class="text-muted">Step 4: Pick your target group</h2>
+    <button type="button" class="d-flex align-items-center btn text-primary fw-bold mt-2 mb-5" data-bs-toggle="modal" data-bs-target="#instructionsModal">
+        <svg xmlns="http://www.w3.org/2000/svg" style="height: 24px; width: 24px; margin-right: 5px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg><span>Help</span>
+    </button>
 
-    <h2 class="text-muted">Step 5: See your analysis</h2>
+    <h2 class="text-muted fs-3 fw-light">Step 4: Pick Target Group</h2>
+
+    <h2 class="text-muted fs-3 fw-light">Step 5: See your analysis</h2>
+    <script>
+        document.getElementById("form-columns").addEventListener("submit", function() {
+            document.getElementById("spinner").style.display = "flex";
+            document.getElementById("spinner").style.alignItems="center";
+        });
+    </script>
 {% endblock %}

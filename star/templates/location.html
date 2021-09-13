@@ -1,21 +1,26 @@
 {% extends "layout.html" %}
+{% block progress %}
+<div class="progress mb-2" style="height: 25px;">
+    <div class="progress-bar px-3 text-end fs-6" role="progressbar" style="width: fit-content;" aria-valuenow=5" aria-valuemin="0" aria-valuemax="100">5%</div>
+</div>
+{% endblock %}
 
 {% block instructions %}
     <p>
         In order to complete your traffic stop analysis, you are going to need
         to know the city you are analyzing and have an Excel or CSV file of the
         traffic stop records for that city.
-
+    </p>
+    <p>
         First, choose your city. If we find more than one city with that name,
         you'll have a chance to pick which one.
     </p>
 {% endblock %}
 
 {% block form %}
-    <h2 class="text-primary">Step 1: Choose your city</h2>
-
+    <h2 class="text-primary fw-bold mt-0">Step 1: Choose City</h2>
     {% if error -%}
-        <div class="alert alert-danger" role="alert">{{ error }}</div>
+        <div class="alert alert-danger" role="alert" style="font-size: 1rem;">{{ error }}</div>
     {%- endif %}
 
     <form action="{{ url_for("star.location") }}" method="POST">
@@ -23,22 +28,27 @@
             <input type="text" name="location" id="location"
                    class="form-control" placeholder="Your city"
                    aria-label="Your city" />
-            <p class="help-block">When you start to enter your city, a menu will
+            <p class="my-4 fs-6">When you start to enter your city, a menu will
                 appear with suggestions. You can choose one of them or keep
                 typing.</p>
 
         </div>
 
-        <button type="submit" class="btn btn-default">
-            Choose your city
+        <button class="btn btn-primary" type="submit">
+            Choose Your City
         </button>
     </form>
 
-    <h2 class="text-muted">Step 2: Upload your traffic stop records</h2>
-    <h2 class="text-muted">Step 3: Select the right columns from your
-        records</h2>
-    <h2 class="text-muted">Step 4: Pick your target group</h2>
-    <h2 class="text-muted">Step 5: See your analysis</h2>
+    <button type="button" class="d-flex align-items-center btn text-primary fw-bold mt-4 mb-5" data-bs-toggle="modal" data-bs-target="#instructionsModal">
+        <svg xmlns="http://www.w3.org/2000/svg" style="height: 24px; width: 24px; margin-right: 5px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg><span>Help</span>
+    </button>
+
+    <h2 class="text-muted fs-3 fw-light">Step 2: Upload Traffic Stop Records</h2>
+    <h2 class="text-muted fs-3 fw-light">Step 3: Select Columns From Your Records</h2>
+    <h2 class="text-muted fs-3 fw-light">Step 4: Pick Target Group</h2>
+    <h2 class="text-muted fs-3 fw-light">Step 5: See your analysis</h2>
     <script src="{{ url_for('static', filename="location.js") }}"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key={{ config.GOOGLE_MAPS_API_KEY }}&libraries=places&callback=initAutocomplete"
             async defer></script>

@@ -1,6 +1,10 @@
 {% extends "layout.html" %}
 {% import "_forms.html" as forms %}
-
+{% block progress %}
+<div class="progress mb-2" style="height: 25px;">
+    <div class="progress-bar px-3 text-end fs-6" role="progressbar" style="width: 80%;" aria-valuenow=80" aria-valuemin="0" aria-valuemax="100">80%</div>
+</div>
+{% endblock %}
 {% block instructions %}
     <p>
         Pick the group within your target column that you want to examine for
@@ -13,48 +17,65 @@
     {% include "_step_2_success.html" %}
     {% include "_step_3_success.html" %}
 
-    <h2 class="text-primary">Step 4: Pick your target group</h2>
+    <h2 class="text-primary mt-4">Step 4: Pick Target Group</h2>
     <div class="row">
-        <form action="{{ url_for("star.options") }}" method="POST">
-            <div class="col-md-9 col-sm-12">
-                <div class="form-group">
-                    <label for="target_group_input">Target group</label>
-                    {{ forms.select(target_opts, "target_group", "target_group_input") }}
-                    <p class="help-block">
-                        Choose the group that is most likely to be
-                        disproportionally stopped.
-                    </p>
-                </div>
-                <div class="checkbox">
-                    <label for="dst_restrict_input">
-                        <input type="checkbox" name="dst_restrict"
-                               id="dst_restrict_input">Restrict dates to +/- 30
-                        days from Daylight Savings Time start and end
-                    </label>
-                    <p class="help-block">This ensures that the periods analyzed
-                        have roughly equal amounts of daytime and nighttime.
-                        Most years, this is mid-February to mid-April and the
-                        beginning of October to the end of November.</p>
-                    <p class="help-block">
-                        Selecting this option takes advantage of the large shift
-                        in the relationship between lighting and clock time
-                        caused by daylight savings time. Selecting this option
-                        will severely reduce the number of cases analyzed.
-                        Consider using this option as a sensitivity test.
-                    </p>
-                </div>
-                <p>
-                    <button type="submit" class="btn btn-default">Analyze your
-                        records
-                    </button>
-                </p>
-                <p class="text-danger">
-                    This step may take several minutes to run, depending on the
-                    size of your file.
+        <form action="{{ url_for("star.options") }}" method="POST" id="form-options">
+            <div class="form-group">
+                <label class="fs-5 fw-bold" for="target_group_input">Target group</label>
+                {{ forms.select(target_opts, "target_group", "target_group_input") }}
+                <p class="help-block fs-6 mt-1 mb-4">
+                    Pick the group within your target column that you want to examine for
+                    possible disproportionality. Choose the group that is most likely to be
+                    disproportionally stopped.
                 </p>
             </div>
+            <div class="checkbox">
+                <label class="fs-5" for="dst_restrict_input">
+                    <input class="form-check-input" type="checkbox" name="dst_restrict"
+                            id="dst_restrict_input"> Restrict dates to +/- 30
+                    days from Daylight Savings Time start and end
+                </label>
+                <p class="help-block fs-6">This ensures that the periods analyzed
+                    have roughly equal amounts of daytime and nighttime.
+                    Most years, this is mid-February to mid-April and the
+                    beginning of October to the end of November.</p>
+                <p class="help-block fs-6">
+                    Selecting this option takes advantage of the large shift
+                    in the relationship between lighting and clock time
+                    caused by daylight savings time. Selecting this option
+                    will severely reduce the number of cases analyzed.
+                    Consider using this option as a sensitivity test.
+                </p>
+            </div>
+            <p>
+                <button type="submit" class="btn btn-primary mt-3 mb-2">Analyze your
+                    records
+                </button>
+            </p>
+            <div id="spinner" style="display: none;">
+                <div class="spinner-border text-info" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <span style="margin-left: 10px;">Analyzing...</span>
+            </div>
+            <p class="text-danger fs-6 my-4">
+                Note: This step may take several minutes to run, depending on the
+                size of your file.
+            </p>
         </form>
+
+        <button type="button" class="d-flex align-items-center btn text-primary fw-bold mt-2 mb-5" data-bs-toggle="modal" data-bs-target="#instructionsModal">
+            <svg xmlns="http://www.w3.org/2000/svg" style="height: 24px; width: 24px; margin-right: 5px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg><span>Help</span>
+        </button>
     </div>
 
-    <h2 class="text-muted">Step 5: See your analysis</h2>
+    <h2 class="text-muted fs-3 fw-light">Step 5: See your analysis</h2>
+    <script>
+        document.getElementById("form-options").addEventListener("submit", function() {
+            document.getElementById("spinner").style.display = "flex";
+            document.getElementById("spinner").style.alignItems="center";
+        });
+    </script>
 {% endblock %}
