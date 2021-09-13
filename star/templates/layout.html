@@ -16,8 +16,15 @@
         <a class="navbar-brand fs-3 fw-bold text-primary logo" href="{{ url_for("star.index") }}">STAR</a>
         <div class="ml-auto">
             <a class="nav-item fw-bold btn btn-outline-primary" href="{{ url_for("star.location") }}">
+                {% if request.url_rule.endpoint == "star.index" %}
                 Begin Analysis
+                {% else %}
+                New Analysis
+                {% endif %}
             </a>
+        </div>
+        <div class="w-100 mt-2" style="flex-shrink: 0;">
+            {% block progress %}{% endblock %}
         </div>
     </div>
 </nav>
@@ -41,10 +48,6 @@
 
     {% block body %}
         <div class="position-relative mx-auto row container content px-0">
-            <div class="col-12">
-                {% block progress %}{% endblock %}
-            </div>
-    
             <div class="modal fade" id="instructionsModal" tabindex="-1" aria-labelledby="instructionsModal" style="display: none;" aria-hidden="true">
               <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content">
@@ -59,7 +62,7 @@
               </div>
             </div>
             
-            <div class="hero-p prose">
+            <div class="hero-p prose mt-0">
                 {% block form %}{% endblock %}
             </div>
         </div>

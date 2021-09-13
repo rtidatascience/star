@@ -1,8 +1,8 @@
 {% extends "layout.html" %}
 {% import "_forms.html" as forms %}
 {% block progress %}
-<div class="progress mb-2" style="height: 25px;">
-    <div class="progress-bar px-3 text-end fs-6" role="progressbar" style="width: 50%;" aria-valuenow=50" aria-valuemin="0" aria-valuemax="100">50%</div>
+<div class="progress mb-2" style="height: 15px;">
+    <div class="progress-bar px-3 text-end" role="progressbar" style="width: 50%;" aria-valuenow=50" aria-valuemin="0" aria-valuemax="100">50%</div>
 </div>
 {% endblock %}
 {% block instructions %}
@@ -42,7 +42,7 @@
     {% include "_step_1_success.html" %}
     {% include "_step_2_success.html" %}
 
-    <h2 class="text-primary">Step 3: Select Columns From Your Records</h2>
+    <h2 class="text-primary fw-bold mt-0">Step 3: Select Columns From Your Records</h2>
 
     {% if error -%}
         <div class="alert alert-danger" style="font-size: 1rem;">{{ error }}</div>
@@ -115,7 +115,7 @@
             <p>
                 <button type="submit" class="btn btn-primary">Submit Your Selections</button>
             </p>
-            <div id="spinner" style="display: none;">
+            <div class="my-2" id="spinner" style="display: none;">
                 <div class="spinner-border text-info" role="status">
                     <span class="visually-hidden">Loading...</span>
                 </div>

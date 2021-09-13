@@ -1,8 +1,8 @@
 {% extends "layout.html" %}
 {% import "_forms.html" as forms %}
 {% block progress %}
-<div class="progress mb-2" style="height: 25px;">
-    <div class="progress-bar px-3 text-end fs-6" role="progressbar" style="width: 80%;" aria-valuenow=80" aria-valuemin="0" aria-valuemax="100">80%</div>
+<div class="progress mb-2" style="height: 15px;">
+    <div class="progress-bar px-3 text-end" role="progressbar" style="width: 80%;" aria-valuenow=80" aria-valuemin="0" aria-valuemax="100">80%</div>
 </div>
 {% endblock %}
 {% block instructions %}
@@ -17,7 +17,7 @@
     {% include "_step_2_success.html" %}
     {% include "_step_3_success.html" %}
 
-    <h2 class="text-primary mt-4">Step 4: Pick Target Group</h2>
+    <h2 class="text-primary fw-bold mt-4">Step 4: Pick Target Group</h2>
     <div class="row">
         <form action="{{ url_for("star.options") }}" method="POST" id="form-options">
             <div class="form-group">
