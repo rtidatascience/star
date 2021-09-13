@@ -1,6 +1,5 @@
 {% macro select(options, name, id, size=None) -%}
-    <select class="form-control" name="{{ name }}" id="{{ id }}"
-            {% if size %}size="{{ size }}"{% endif %}>
+    <select class="form-select my-3" name="{{ name }}" id="{{ id }}">
         {% for option in options -%}
             <option value="{{ option }}">{{ option }}</option>
         {%- endfor %}

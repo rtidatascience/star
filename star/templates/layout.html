@@ -10,31 +10,36 @@
     {% endassets %}
 </head>
 <body>
-<div class="container">
-    {% block header %}
-        <div class="row">
-            <div class="col-xs-12">
-                <header class="banner-header">
-                    <a href="{{ url_for("star.index") }}">
-                    <img class="img-responsive"
-                         src="{{ url_for('static', filename="banner.jpg") }}"
-                         alt="RTI-STAR (Statistical Traffic Analysis Report)"/>
-                        </a>
-                </header>
-            </div>
+{% block navigation %}
+<nav class="navbar bg-white fixed-top border-bottom shadow-sm">
+    <div class="container">
+        <a class="navbar-brand fs-3 fw-bold text-primary logo" href="{{ url_for("star.index") }}">STAR</a>
+        <div class="ml-auto">
+            <a class="nav-item fw-bold btn btn-outline-primary" href="{{ url_for("star.location") }}">
+                {% if request.url_rule.endpoint == "star.index" %}
+                Begin Analysis
+                {% else %}
+                New Analysis
+                {% endif %}
+            </a>
         </div>
-    {% endblock %}
-
+        <div class="w-100 mt-2" style="flex-shrink: 0;">
+            {% block progress %}{% endblock %}
+        </div>
+    </div>
+</nav>
+{% endblock %}
+<main class="flex-grow-1">
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             <div class="row">
                 {% for category, message in messages %}
                     {% if category == "message" %}
-                        <div class="col-xs-12 alert alert-info"
+                        <div class="col-xs-12 fs-6"
                              role="alert">{{ message }}</div>
                     {% else %}
-                        <div class="col-xs-12 alert alert-{{ category }}"
-                             role="alert">{{ message }}</div>
+                        <div class="col-xs-12 alert alert-{{ category }} fs-6"
+                             role="alert" style="font-size: 1rem;">{{ message }}</div>
                     {% endif %}
                 {% endfor %}
             </div>
@@ -42,37 +47,49 @@
     {% endwith %}
 
     {% block body %}
-        <div class="row">
-            <div class="col-sm-3">
-                <div class="instructions">
+        <div class="position-relative mx-auto row container content px-0">
+            <div class="modal fade" id="instructionsModal" tabindex="-1" aria-labelledby="instructionsModal" style="display: none;" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Instructions</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
                     {% block instructions %}{% endblock %}
+                  </div>
                 </div>
+              </div>
             </div>
-            <div class="col-sm-9">
+            
+            <div class="hero-p prose mt-0">
                 {% block form %}{% endblock %}
             </div>
         </div>
     {% endblock %}
-
-    {% block footer %}
-        <footer class="row footer">
-            <div class="col-xs-12">
-                <img src="{{ url_for('static', filename='RTI_logo_blue.gif') }}"
-                     alt="RTI logo">
-                <span>Copyright (c) 2016 RTI</span>
-                |
-                <span><a href="{{ url_for('star.terms') }}">Terms &
-                    Conditions</a></span>
-                |
-                <span><a href="mailto:toolhelp@rti.org">Contact Email</a></span>
-            </div>
-        </footer>
-    {% endblock %}
-</div>
+</main>
+{% block footer %}
+<footer class="bg-light mt-5 py-5">
+    <div class="container">
+        <div class="mb-3 fs-5 fw-bold" style="width: fit-content;">
+            <a class="text-decoration-none" href="mailto:toolhelp@rti.org" style="color: #2E5394;">Contact Us</a>
+            <a class="d-block text-decoration-none" href="{{ url_for('star.terms') }}" style="color: #2E5394;">
+                Terms & Conditions
+            </a>
+            <a class="d-block my-3" href="http://www.rti.org/">
+                <img alt="RTI Logo" class="d-block" src="{{ url_for('static', filename='RTI_logo_blue.png') }}" style="width: 150px;" />
+            </a>
+            <p class="text-secondary" style="font-size: 0.5rem;">Copyright ©️ 2021 RTI International</p>
+            <a class="text-decoration-none" href="#top" style="color: #2E5394;">&uarr; Back to Top</a>
+        </div>
+    </div>
+</footer>
+{% endblock %}
 
 {% assets "js_all" %}
     <script type="text/javascript" src="{{ ASSET_URL }}"></script>
 {% endassets %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>  
 <script>
     (function (i, s, o, g, r, a, m) {
         i['GoogleAnalyticsObject'] = r;

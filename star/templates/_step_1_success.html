@@ -1,5 +1,9 @@
-<h2 class="text-success">Step 1: Choose your city <small><a id="change_location" href="{{ url_for('star.location') }}">Change</a></small></h2>
+<h2 class="fw-normal fs-3">
+    <a class="text-success text-decoration-none" href="{{ url_for('star.location') }}" id="change_location">
+        Step 1: Choose City
+    </a>
+</h2>
 
-<p>
+<p class="mb-4">
     {{ session["location"]["name"] }}
 </p>

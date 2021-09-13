@@ -1,27 +1,6 @@
-body {
-    font-family: Arial, sans-serif;
-}
-
 a {
     color: #005295;
     text-decoration: underline;
-}
-
-.instructions {
-    border-radius: 3px;
-    padding: 20px 10px 10px 10px;
-    background-color: #8CA2CB;
-    color: black;
-}
-
-.instructions a {
-    color: #002E5F;
-}
-
-.footer {
-    border-top: 1px solid #dcdcdc;
-    margin-top: 20px;
-    padding-top: 10px;
 }
 
 a.btn {
@@ -45,15 +24,66 @@ h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
     color: #7c95c2;
 }
 
-.text-danger {
-    color: #AF292E;
+/* 2021 update */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
-.alert-danger {
-    background-color: #AF292E;
-    border-color: #AF292E;
+.content {
+    padding-top: 10rem;
 }
 
-.banner-header {
-    padding-bottom: 2rem;
+.logo {
+    position: relative;
+}
+
+.logo::after {
+    content: "";
+    position: absolute;
+    left: 0px;
+    bottom: 10px;
+    width: 100%;
+    height: 20%;
+    background-color: #c1e0f8;
+    z-index: -1;
+}
+
+.hero-p {
+    width: 75%;
+    font-size: 1.25rem;
+    margin-top: 1.5rem;
+}
+
+.prose h2 {
+    margin: 0rem 0 1.5rem 0;
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+.prose h3 {
+    margin: 3rem 0 1.5rem 0;
+
+    font-size: 1.75rem;
+    font-weight: 600;
+}
+
+.prose p {
+    margin-top: 1.5rem;
+    font-size: 1.15rem;
+}
+
+@media only screen and (max-width: 960px) {
+    .content {
+        padding-top: 8rem;
+    }
+
+    .hero-p {
+        width: 100%;
+    }
 }

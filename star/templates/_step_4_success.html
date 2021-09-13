@@ -1,24 +1,25 @@
-<h2 class="text-success">
-    Step 4: Pick your target group
-    <small><a id="change_options" href="{{ url_for('star.options') }}">Change</a></small>
+<h2 class="fw-normal fs-3 mt-4">
+    <a class="text-success text-decoration-none" href="{{ url_for('star.options') }}" id="change_options">
+        Step 4: Pick Target Group
+    </a>
 </h2>
 
-<p>
-    <strong>Target group</strong>
+<p class="my-0">
+    Target group:
     <span>
     {{ session['options']['target_group'] }}
     </span>
 </p>
 
 {% if session['options']['target_group_name'] %}
-<p>
-    <strong>Target group name</strong>
+<p class="my-0">
+    Target group name:
     <span>{{ session["options"]["target_group_name"] }}</span>
 </p>
 {% endif %}
 
-<p>
-    <strong>Restrict dates to +/- 30 days from DST transition</strong>
+<p class="my-0">
+    Restrict dates to +/- 30 days from DST transition:
     <span>
         {% if session["options"]["dst_restrict"] %}
         True

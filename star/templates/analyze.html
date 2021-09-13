@@ -1,6 +1,10 @@
 {% extends "layout.html" %}
 {% import "_forms.html" as forms %}
-
+{% block progress %}
+<div class="progress mb-2" style="height: 15px;">
+    <div class="progress-bar px-3 text-end" role="progressbar" style="width: 100%;" aria-valuenow=100" aria-valuemin="0" aria-valuemax="100" />
+</div>
+{% endblock %}
 {% block instructions %}
     <p>
         Columns in the CSV we used for your analysis:
@@ -38,13 +42,13 @@
     {% include "_step_3_success.html" %}
     {% include "_step_4_success.html" %}
 
-    <h2 class="text-primary">Step 5: See your analysis</h2>
+    <h2 class="text-primary fw-bold mt-4">Step 5: See your analysis</h2>
 
     {% if results.error %}
         <p class="text-danger">{{ results.error }}</p>
     {% else %}
         {% if results.p_value_day < 0.05 %}
-            <p>
+            <p class="fs-5">
                 Based on statistical significance alone (p<0.05), this evidence
                 suggests there <em>may</em> be racial disproportionality in
                 traffic stops;
@@ -59,7 +63,7 @@
                 meaningfully large for your community.
             </p>
         {% else %}
-            <p>
+            <p class="fs-5">
                 Based on statistical significance alone (p>=0.05), this evidence
                 does not
                 suggest the existence of racial disproportionality in traffic
@@ -74,7 +78,7 @@
             </p>
         {% endif %}
 
-        <p>
+        <p class="fs-5">
             The regression model indicates that the risk of being in the
             reference group was
             {{ "%.2f%%" | format(results.light_prob) }}
@@ -87,7 +91,11 @@
             versus dark was
             {{ "%.4f" | format(results.p_value_day) }}.
         </p>
-
+        <button type="button" class="d-flex align-items-center btn text-primary fw-bold my-4" data-bs-toggle="modal" data-bs-target="#instructionsModal">
+            <svg xmlns="http://www.w3.org/2000/svg" style="height: 24px; width: 24px; margin-right: 5px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg><span>More Info</span>
+        </button>
         <dl>
             <dt>Date and time analysis was run</dt>
             <dd>{{ datetime }}</dd>
@@ -109,7 +117,7 @@
 
 
         <p>
-            <a href="{{ url_for("star.download") }}">
+            <a class="text-decoration-none text-primary fw-bold" href="{{ url_for("star.download") }}">
                 Download the CSV we used for your analysis.
             </a>
         </p>
@@ -120,53 +128,51 @@
             below.</p>
 
         <div class="row">
-            <div class="col-md-6 col-sm-9 col-xs-12">
-                <form action="{{ url_for('star.email') }}" method="POST">
-                    <div class="form-group">
-                        <label for="email_input">Email</label>
-                        <input type="email" class="form-control"
-                               required="required"
-                               id="email_input"
-                               name="email"/>
-                    </div>
-                    <div class="checkbox">
-                        <label for="optin_input">
-                            <input type="checkbox" id="optin_input" name="optin"
-                                   checked="checked" />
-                            I would like to receive follow-up emails from RTI
-                            about criminal justice.
-                        </label>
-                    </div>
-                    <div class="form-group">
-                        <label for="title_input">Title (optional)</label>
-                        <input type="text" class="form-control"
-                               id="title_input"
-                               name="title"/>
-                    </div>
-                    <div class="form-group">
-                        <label for="name_input">Name (optional)</label>
-                        <input type="text" class="form-control"
-                               id="name_input"
-                               name="name"/>
-                    </div>
-                    <div class="form-group">
-                        <label for="organization_input">Organization (optional)</label>
-                        <input type="text" class="form-control"
-                               id="organization_input"
-                               name="organization"/>
-                    </div>
-                    <p>
-                        <button type="submit" class="btn btn-default">
-                            Get your report
-                        </button>
-                    </p>
-                </form>
-            </div>
+            <form action="{{ url_for('star.email') }}" method="POST">
+                <div class="form-group">
+                    <label class="fs-5 fw-bold" for="email_input">Email</label>
+                    <input type="email" class="form-control my-3"
+                            required="required"
+                            id="email_input"
+                            name="email"/>
+                </div>
+                <div class="checkbox">
+                    <label class="fs-5" for="optin_input">
+                        <input class="form-check-input" type="checkbox" id="optin_input" name="optin"
+                                checked="checked" />
+                        I would like to receive follow-up emails from RTI
+                        about criminal justice.
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="fs-5 fw-bold mt-4" for="title_input">Title (optional)</label>
+                    <input type="text" class="form-control my-3"
+                            id="title_input"
+                            name="title"/>
+                </div>
+                <div class="form-group">
+                    <label class="fs-5 fw-bold" for="name_input">Name (optional)</label>
+                    <input type="text" class="form-control my-3"
+                            id="name_input"
+                            name="name"/>
+                </div>
+                <div class="form-group">
+                    <label class="fs-5 fw-bold" for="organization_input">Organization (optional)</label>
+                    <input type="text" class="form-control my-3"
+                            id="organization_input"
+                            name="organization"/>
+                </div>
+                <p>
+                    <button type="submit" class="btn btn-primary mt-2 mb-3">
+                        Get your report
+                    </button>
+                </p>
+            </form>
         </div>
     {% endif %}
 
     <div class="panel panel-default">
-        <div class="panel-heading">How we calculated your results</div>
+        <div class="panel-heading">How we calculated your results:</div>
         <div class="panel-body">
             <p>Traffic stop profiling analysis was performed using Python 3.9
                 and statsmodels version 0.12.2</p>
