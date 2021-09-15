@@ -7,9 +7,10 @@ from .views import star
 
 DEBUG = True
 ASSETS_DEBUG = True
-SECRET_KEY = 'development-key'
+SECRET_KEY = "development-key"
 UPLOAD_DIR = "/tmp/flask-uploads/"
 ROOT_DIR = os.path.realpath(os.path.dirname(__file__))
+
 
 def create_app():
     app = Flask(__name__)
@@ -20,7 +21,7 @@ def create_app():
     assets.init_app(app)
     mail.init_app(app)
 
-    if not app.config['DEBUG']:
+    if not app.config["DEBUG"]:
         sentry.init_app(app)
 
     make_upload_dir(app)
@@ -28,10 +29,10 @@ def create_app():
 
 
 def make_upload_dir(app):
-    if os.path.exists(app.config['UPLOAD_DIR']):
-        if os.path.isdir(app.config['UPLOAD_DIR']):
+    if os.path.exists(app.config["UPLOAD_DIR"]):
+        if os.path.isdir(app.config["UPLOAD_DIR"]):
             return
         else:
-            os.remove(app.config['UPLOAD_DIR'])
+            os.remove(app.config["UPLOAD_DIR"])
 
-    os.mkdir(app.config['UPLOAD_DIR'])
+    os.mkdir(app.config["UPLOAD_DIR"])
