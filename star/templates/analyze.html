@@ -57,7 +57,7 @@
                         The relationship between membership in the target group and traffic stops during the light and dark intertwilight periods <strong>is {% if not results.significant %}<u>not</u>{% endif %} statistically significant</strong> (p={{ "%.4f" | format(results.p_value_day) }})
                     </li>
                     <li>
-                        The risk of being in the target group during the light portion of the intertwilight period is {{ "%.2f%%" | format(results.light_prob) }} and {{ "%.2f%%" | format(results.dark_prob) }} during the dark period. The absolute risk difference is {{ "%.2f%%" | format(results.risk_difference_day) }} and the relative risk ratio is {{ "%.2f" | format(results.risk_ratio_day) }}.
+                        The risk of being in the target group during the light portion of the intertwilight period is {{ "%.2f%%" | format(results.light_prob) }} and {{ "%.2f%%" | format(results.dark_prob) }} during the dark period. The relative risk ratio is {{ "%.2f" | format(results.risk_ratio_day) }} and the absolute risk difference is {{ "%.2f%%" | format(results.risk_difference_day) }}.
                     </li>
                 </ul>
             </p> 
