@@ -47,50 +47,28 @@
     {% if results.error %}
         <p class="text-danger">{{ results.error }}</p>
     {% else %}
-        {% if results.p_value_day < 0.05 %}
-            <p class="fs-5">
-                Based on statistical significance alone (p<0.05), this evidence
-                suggests there <em>may</em> be racial disproportionality in
-                traffic stops;
-                in-depth analysis of the data is recommended.  All estimates are
-                sensitive to model specification and the user may wish to
-                perform
-                additional analysis. Given the typically large sample sizes
-                available for traffic stop data, we recommend that
-                interpretation
-                of results be more focused on whether the size of the difference
-                in the reported percentages (or, equivalently, their ratio) is
-                meaningfully large for your community.
-            </p>
-        {% else %}
-            <p class="fs-5">
-                Based on statistical significance alone (p>=0.05), this evidence
-                does not
-                suggest the existence of racial disproportionality in traffic
-                stops.
-                However, given the typically large sample sizes available for
-                traffic stop data,
-                we recommend that interpretation of results be more focused on
-                whether the size
-                of the difference in the reported percentages (or, equivalently,
-                their ratio)
-                is meaningfully large for your community.
-            </p>
-        {% endif %}
-
-        <p class="fs-5">
-            The regression model indicates that the risk of being in the
-            reference group was
-            {{ "%.2f%%" | format(results.light_prob) }}
-            during the light portion of the intertwilight period and
-            {{ "%.2f%%" | format(results.dark_prob) }}
-            during the dark portion of the intertwilight period, with a
-            corresponding risk ratio of
-            {{ "%.2f" | format(results.risk_ratio_day) }}. The p-value for the
-            effect of light
-            versus dark was
-            {{ "%.4f" | format(results.p_value_day) }}.
-        </p>
+    <div class="card border-primary mb-3">
+        <div class="card-header">Results Summary</div>
+        <div class="card-body">
+            <p class="fs-5 card-text">
+                The analysis presented here consists of two parts that should be interpreted together.
+                <ul>
+                    <li>
+                        The relationship between membership in the target group and traffic stops during the light and dark intertwilight periods <strong>is {% if not results.significant %}<u>not</u>{% endif %} statistically significant</strong> (p={{ "%.4f" | format(results.p_value_day) }})
+                    </li>
+                    <li>
+                        The risk of being in the target group during the light portion of the intertwilight period is {{ "%.2f%%" | format(results.light_prob) }} and {{ "%.2f%%" | format(results.dark_prob) }} during the dark period. The absolute risk difference is {{ "%.2f%%" | format(results.risk_difference_day) }} and the relative risk ratio is {{ "%.2f" | format(results.risk_ratio_day) }}.
+                    </li>
+                </ul>
+            </p> 
+       </div>
+    </div>
+    <div>
+        Context Placeholder
+        <!-- ADDITIONAL EXPLANATORY CONTEXT HERE -->
+        <!-- FOR HIDDEN ELEMENTS: https://getbootstrap.com/docs/4.0/components/collapse/ -->
+        <!-- <div><small>{{ results.model_summary_html|safe }}</small></div> -->
+    </div>
         <button type="button" class="d-flex align-items-center btn text-primary fw-bold my-4" data-bs-toggle="modal" data-bs-target="#instructionsModal">
             <svg xmlns="http://www.w3.org/2000/svg" style="height: 24px; width: 24px; margin-right: 5px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />

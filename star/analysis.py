@@ -115,19 +115,25 @@ class Analysis:
             light_prob = df[df["light"] == 1].fitted_values.median() * 100
 
         summary = fitted.summary()
-        odds_ratios = np.exp(fitted.params)
         p_values = fitted.pvalues
-        odds_ratio_day = odds_ratios["C(light)[T.1]"]
         p_value_day = p_values["C(light)[T.1]"]
-        risk_ratio_day = 0.5
-        print(summary.as_text())
+        significant = p_value_day < 0.05
+        risk_ratio_day = light_prob / dark_prob
+        risk_difference_day = light_prob - dark_prob
         model_summary_html = summary.as_html()
+
+        # Not displayed, but useful for debugging
+        odds_ratios = np.exp(fitted.params)
+        odds_ratio_day = odds_ratios["C(light)[T.1]"]
+        
         return {
-            "model_summary_html": model_summary_html,
-            "odds_ratio_day": odds_ratio_day,
+            "significant": significant,
             "p_value_day": p_value_day,
             "risk_ratio_day": risk_ratio_day,
-            "marginal_effect_day": marginal_effect_day,
+            "risk_difference_day": risk_difference_day,
             "light_prob": light_prob,
             "dark_prob": dark_prob,
+            "model_summary_html": model_summary_html,
+            "odds_ratio_day": odds_ratio_day,  # not used
+            "marginal_effect_day": marginal_effect_day,  # not used
         }
