@@ -5,36 +5,6 @@
     <div class="progress-bar px-3 text-end" role="progressbar" style="width: 100%;" aria-valuenow=100" aria-valuemin="0" aria-valuemax="100" />
 </div>
 {% endblock %}
-{% block instructions %}
-    <p>
-        Columns in the CSV we used for your analysis:
-    </p>
-    <dl>
-        <dt>datetime</dt>
-        <dd>The date and time of the traffic stop</dd>
-        <dt>original_target</dt>
-        <dd>The data from the column you specified as your target column.</dd>
-        <dt>target</dt>
-        <dd>
-            0 if the stop was not in the group you were checking for profiling,
-            1 if the stop was in the group.
-        </dd>
-        <dt>light</dt>
-        <dd>0 if the stop was at dark, 1 if it was during the light.</dd>
-        <dt>year</dt>
-        <dd>The year of the traffic stop.</dd>
-        <dt>day_of_week</dt>
-        <dd>The day of the week of the stop, from 1 for Sunday to 7 for
-            Saturday.
-        </dd>
-        <dt>time_in_seconds</dt>
-        <dd>The number of seconds since the midnight before the stop.</dd>
-        {% if session['columns']['officer_id_column'] %}
-            <dt>officerid</dt>
-            <dd>The ID of the officer making the stop.</dd>
-        {% endif %}
-    </dl>
-{% endblock %}
 
 {% block form %}
     {% include "_step_1_success.html" %}
@@ -65,16 +35,15 @@
     </div>
     <div>
         Context Placeholder
-        <!-- ADDITIONAL EXPLANATORY CONTEXT HERE -->
+        <!-- ADDITIONAL EXPLANATORY/INTERPRETATION HERE -->
         <!-- FOR HIDDEN ELEMENTS: https://getbootstrap.com/docs/4.0/components/collapse/ -->
         <!-- <div><small>{{ results.model_summary_html|safe }}</small></div> -->
     </div>
-        <button type="button" class="d-flex align-items-center btn text-primary fw-bold my-4" data-bs-toggle="modal" data-bs-target="#instructionsModal">
-            <svg xmlns="http://www.w3.org/2000/svg" style="height: 24px; width: 24px; margin-right: 5px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg><span>More Info</span>
-        </button>
-        <dl>
+    <!-- PUT ME IN THE "Data & Statistical Test Details" COLLAPSE -->
+    <div>
+        <p>Analysis was performed using Python {{results.python_version_info}}
+        and statsmodels version {{results.statsmodels_version_info}}</p>
+        <dl class="small">
             <dt>Date and time analysis was run</dt>
             <dd>{{ datetime }}</dd>
             <dt>Original filename</dt>
@@ -92,14 +61,41 @@
             <dt>Number of darkness events in ITP</dt>
             <dd>{{ dark_count }}</dd>
         </dl>
-
-
+    </div>
+    <p><strong>
+        Columns in the CSV we used for your analysis:
+    </strong></p>
+    <dl class="small">
+        <dt>datetime</dt>
+        <dd>The date and time of the traffic stop</dd>
+        <dt>original_target</dt>
+        <dd>The data from the column you specified as your target column.</dd>
+        <dt>target</dt>
+        <dd>
+            0 if the stop was not in the group you were checking for profiling,
+            1 if the stop was in the group.
+        </dd>
+        <dt>light</dt>
+        <dd>0 if the stop was at dark, 1 if it was during the light.</dd>
+        <dt>year</dt>
+        <dd>The year of the traffic stop.</dd>
+        <dt>day_of_week</dt>
+        <dd>The day of the week of the stop, from 1 for Sunday to 7 for
+            Saturday.
+        </dd>
+        <dt>time_in_seconds</dt>
+        <dd>The number of seconds since the midnight before the stop.</dd>
+        {% if session['columns']['officer_id_column'] %}
+            <dt>officerid</dt>
+            <dd>The ID of the officer making the stop.</dd>
+        {% endif %}
         <p>
             <a class="text-decoration-none text-primary fw-bold" href="{{ url_for('star.download') }}">
-                Download the CSV we used for your analysis.
+                ⬇️ Download the CSV we used for your analysis.
             </a>
         </p>
-
+    </dl>
+    <!-- END "Data & Statistical Test Details" COLLAPSE CONTENT -->
         <h3>Get an email of your report</h3>
 
         <p>Would you like to get an email of your report? Enter your email
@@ -152,8 +148,7 @@
     <div class="panel panel-default">
         <div class="panel-heading">How we calculated your results:</div>
         <div class="panel-body">
-            <p>Traffic stop profiling analysis was performed using Python 3.9
-                and statsmodels version 0.12.2</p>
+
 
             <p>For analysis with an officer id, a marginal regression model was
                 fit using Generalized Estimating Equations (GEE). Default
