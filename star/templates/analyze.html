@@ -17,12 +17,15 @@
     {% if results.error %}
         <p class="text-danger">{{ results.error }}</p>
     {% else %}
-    <div class="card border-primary mb-3">
-        <div class="card-header">Results Summary</div>
-        <div class="card-body">
-            <p class="fs-5 card-text">
+    <p>
+        As a summary, the Veil of Darkness approach compares the likelihood of a traffic stop occurring for a member of the target group during two time periods: the light intertwilight period and the dark intertwilight period. If target group membership is significantly more likely during the light period, when skin color may be visible, this could be evidence of racially disproportionate traffic stops.
+    </p>
+    <div class="card my-4">
+        <div class="card-header bg-light">Results Summary</div>
+        <div class="card-body p-4">
+            <div class="m-0 fs-5 card-text">
                 The analysis presented here consists of two parts that should be interpreted together.
-                <ul>
+                <ul class="m-0">
                     <li>
                         The relationship between membership in the target group and traffic stops during the light and dark intertwilight periods <strong>is {% if not results.significant %}<u>not</u>{% endif %} statistically significant</strong> (p={{ "%.4f" | format(results.p_value_day) }})
                     </li>
@@ -30,72 +33,134 @@
                         The risk of being in the target group during the light portion of the intertwilight period is {{ "%.2f%%" | format(results.light_prob) }} and {{ "%.2f%%" | format(results.dark_prob) }} during the dark period. The relative risk ratio is {{ "%.2f" | format(results.risk_ratio_day) }} and the absolute risk difference is {{ "%.2f%%" | format(results.risk_difference_day) }}.
                     </li>
                 </ul>
-            </p> 
+            </div> 
        </div>
     </div>
-    <div>
-        Context Placeholder
-        <!-- ADDITIONAL EXPLANATORY/INTERPRETATION HERE -->
-        <!-- FOR HIDDEN ELEMENTS: https://getbootstrap.com/docs/4.0/components/collapse/ -->
-        <!-- <div><small>{{ results.model_summary_html|safe }}</small></div> -->
+    <p>
+        The first part of the analysis is a statistical test on the relationship of light versus dark on the group of interest (the target group selected above), while accounting for other variables like time of day and day of the week. As an oversimplification, if the relationship is statistically significant, this means that the relationship is strong enough to merit further investigation. For a more in-depth explanation, click “More on Statistical Significance” below.
+    </p>
+    <button class="btn btn-primary mt-3 mb-4" type="button" data-toggle="collapse" data-target="#moreOnStatisticalSignificance" aria-expanded="false" aria-controls="moreOnStatisticalSignificance">
+        More on Statistical Significance
+    </button>
+    <div class="fs-5">
+        <div class="collapse" id="moreOnStatisticalSignificance">
+            <div class="card card-body fs-6">
+                <h4 class="my-0 fs-5 fw-bold">More on Statistical Significance</h4>
+                <p>Despite its widespread use, statistical significance and hypothesis testing is often misinterpreted. Here we provide more explanation of what the statistical test can tell us.<br /><br />
+                A more technical definition is that a statistical test answers this question: if we assume there’s no relationship for traffic stops during light periods and dark periods among the target group, how unlikely are these results?<br /><br /> 
+                The output of this statistical test is a p-value. A large p-value (greater than 0.05) means that, if we assume there was no relationship, it's likely we would see this result and a small p-value (less than 0.05) means it's unlikely we would see this result. A small p-value provides evidence for the hypothesis that racial disproportionality exists. However, a small p-value and statistically significant results are more likely with a larger sample size, which is common with traffic stop data. Thus, it is important to also review the risk ratio and risk difference for the size of the effect if results are statistically significant.<br /><br />
+                While the statistical test is useful, it has several important limitations to consider:</p>
+                <ul>
+                    <li>Even though the p-value is a continuous number, it does not tell us the magnitude or direction of racial disproportionality if it exists.</li>
+                    <li>A large p-value, which results in a not statistically significant relationship, does not provide evidence for the absence of racial disproportionality.</li>
+                    <li>The statistical test does not give us a binary yes or no answer to whether there is a systemic issue with racial disproportionality in traffic stops—it can only provide evidence or fail to provide evidence for the hypothesis that racial disproportionality exists.</li>
+                </ul>
+                <p>For more on understanding statistical testing and p-values, see the following resources:</p>
+                <ul>
+                    <li><a class="text-info text-decoration-none" href="https://archive.md/ejRvY" target="_blank">P-Value and Statistical Significance | Simply Psychology</a></li>
+                    <li><a class="text-info text-decoration-none" href="https://archive.md/XWJwL" target="_blank">Statisticians Found One Thing They Can Agree On: It’s Time To Stop Misusing P-Values | FiveThirtyEight</a></li>
+                    <li><a class="text-info text-decoration-none" href="https://www.tandfonline.com/doi/full/10.1080/00031305.2016.1154108" target="_blank">[Open Access Link] Wasserstein, Ronald L., and Nicole A. Lazar. "The ASA statement on p-values: context, process, and purpose." (2016): 129-133</a></li>
+                </ul>
+            </div>
+        </div>
     </div>
-    <!-- PUT ME IN THE "Data & Statistical Test Details" COLLAPSE -->
-    <div>
-        <p>Analysis was performed using Python {{results.python_version_info}}
-        and statsmodels version {{results.statsmodels_version_info}}</p>
-        <dl class="small">
-            <dt>Date and time analysis was run</dt>
-            <dd>{{ datetime }}</dd>
-            <dt>Original filename</dt>
-            <dd>{{ original_filename }}</dd>
-            <dt>Date range of cases</dt>
-            <dd>{{ date_range }}</dd>
-            <dt>Intertwilight period (ITP) range</dt>
-            <dd>{{ itp_range }}</dd>
-            <dt>Original number of stop records</dt>
-            <dd>{{ "{:,d}".format(original_record_count) }}</dd>
-            <dt>Number of stop records used for analysis</dt>
-            <dd>{{ "{:,d}".format(final_record_count) }}</dd>
-            <dt>Number of daylight events in ITP</dt>
-            <dd>{{ light_count }}</dd>
-            <dt>Number of darkness events in ITP</dt>
-            <dd>{{ dark_count }}</dd>
-        </dl>
+    <p>
+        The second part of the analysis is the risk ratio, which can tell us the magnitude of disproportionality. The risk ratio is made up of two numbers: the average probability of being a member of the target group during the light period and the average probability of being a member of the target group during the dark period. The risk ratio is the ratio of these two numbers. If racial disproportionality exists, we expect the probability of being a member of the target group (assuming the target group has dark-colored skin) to be much higher during the light period (compared to the dark period) and the risk ratio much larger than 1.
+    </p>
+    <p>
+        It is important to contextualize the risk ratio with both the absolute risk difference and the prior test of statistical significance. The absolute risk difference may still be small—e.g. a 2% to 1% difference is a ratio of 2, but an absolute difference of only 1%. Even if a risk ratio is large, it could be derived from a small sample size and not be statistically significant. For more on interpreting risk, click “Resources for Understanding Risk” below.
+    </p>
+    <button class="btn btn-primary mt-3 mb-4" type="button" data-toggle="collapse" data-target="#resourcesForUnderstandingRisk" aria-expanded="false" aria-controls="resourcesForUnderstandingRisk">
+        Resources for Understanding Risk
+    </button>
+    <div class="fs-5">
+        <div class="collapse" id="resourcesForUnderstandingRisk">
+            <div class="card card-body fs-6">
+                <h4 class="my-0 fs-5 fw-bold">Resources for Understanding Risk</h4>
+                <ul class="mt-3">
+                    <li><a class="text-info text-decoration-none" href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4640017/" target="_blank">[Open Access Link] Ranganathan, Priya, Rakesh Aggarwal, and C. S. Pramesh. "Common pitfalls in statistical analysis: Odds versus risk." Perspectives in clinical research 6.4 (2015): 222</a></li>
+                    <li><a class="text-info text-decoration-none" href="https://academic.oup.com/ndt/article/32/suppl_2/ii13/3056571" target="_blank">[Open Access Link] Noordzij, Marlies, et al. "Relative risk versus absolute risk: one cannot be interpreted without the other." Nephrology Dialysis Transplantation 32.suppl_2 (2017): ii13-ii18.</a></li>
+                </ul>
+            </div>
+        </div>
     </div>
-    <p><strong>
-        Columns in the CSV we used for your analysis:
-    </strong></p>
-    <dl class="small">
-        <dt>datetime</dt>
-        <dd>The date and time of the traffic stop</dd>
-        <dt>original_target</dt>
-        <dd>The data from the column you specified as your target column.</dd>
-        <dt>target</dt>
-        <dd>
-            0 if the stop was not in the group you were checking for profiling,
-            1 if the stop was in the group.
-        </dd>
-        <dt>light</dt>
-        <dd>0 if the stop was at dark, 1 if it was during the light.</dd>
-        <dt>year</dt>
-        <dd>The year of the traffic stop.</dd>
-        <dt>day_of_week</dt>
-        <dd>The day of the week of the stop, from 1 for Sunday to 7 for
-            Saturday.
-        </dd>
-        <dt>time_in_seconds</dt>
-        <dd>The number of seconds since the midnight before the stop.</dd>
-        {% if session['columns']['officer_id_column'] %}
-            <dt>officerid</dt>
-            <dd>The ID of the officer making the stop.</dd>
-        {% endif %}
-        <p>
-            <a class="text-decoration-none text-primary fw-bold" href="{{ url_for('star.download') }}">
-                ⬇️ Download the CSV we used for your analysis.
-            </a>
-        </p>
-    </dl>
-    <!-- END "Data & Statistical Test Details" COLLAPSE CONTENT -->
+    <button class="btn btn-primary mt-3 mb-4" type="button" data-toggle="collapse" data-target="#dataStatisticalTestDetails" aria-expanded="false" aria-controls="dataStatisticalTestDetails">
+        Data & Statistical Test Details
+    </button>
+    <div class="fs-5">
+        <div class="collapse" id="dataStatisticalTestDetails">
+            <div class="card card-body fs-6">
+                <h4 class="my-0 fs-5 fw-bold">Data & Statistical Test Details</h4>
+                <p>Analysis was performed using Python {{results.python_version_info}}
+                and statsmodels version {{results.statsmodels_version_info}}</p>
+                <dl class="small">
+                    <dt>Date and time analysis was run</dt>
+                    <dd>{{ datetime }}</dd>
+                    <dt>Original filename</dt>
+                    <dd>{{ original_filename }}</dd>
+                    <dt>Date range of cases</dt>
+                    <dd>{{ date_range }}</dd>
+                    <dt>Intertwilight period (ITP) range</dt>
+                    <dd>{{ itp_range }}</dd>
+                    <dt>Original number of stop records</dt>
+                    <dd>{{ "{:,d}".format(original_record_count) }}</dd>
+                    <dt>Number of stop records used for analysis</dt>
+                    <dd>{{ "{:,d}".format(final_record_count) }}</dd>
+                    <dt>Number of daylight events in ITP</dt>
+                    <dd>{{ light_count }}</dd>
+                    <dt>Number of darkness events in ITP</dt>
+                    <dd>{{ dark_count }}</dd>
+                </dl>
+                <p class="mt-2"><strong>
+                    Columns in the CSV we used for your analysis:
+                </strong></p>
+                <dl class="small">
+                    <dt>datetime</dt>
+                    <dd>The date and time of the traffic stop</dd>
+                    <dt>original_target</dt>
+                    <dd>The data from the column you specified as your target column.</dd>
+                    <dt>target</dt>
+                    <dd>
+                        0 if the stop was not in the group you were checking for profiling,
+                        1 if the stop was in the group.
+                    </dd>
+                    <dt>light</dt>
+                    <dd>0 if the stop was at dark, 1 if it was during the light.</dd>
+                    <dt>year</dt>
+                    <dd>The year of the traffic stop.</dd>
+                    <dt>day_of_week</dt>
+                    <dd>The day of the week of the stop, from 1 for Sunday to 7 for
+                        Saturday.
+                    </dd>
+                    <dt>time_in_seconds</dt>
+                    <dd>The number of seconds since the midnight before the stop.</dd>
+                    {% if session['columns']['officer_id_column'] %}
+                        <dt>officerid</dt>
+                        <dd>The ID of the officer making the stop.</dd>
+                    {% endif %}
+                </dl>
+                <p>The full model attempts to predict target group membership based on the following variables:</p>
+                <ul>
+                    <li>Light (1) or Dark (0) Intertwilight Period</li>
+                    <li>Day of Week</li>
+                    <li>Time of Day (B-spline with 6 degrees of freedom)</li>
+                    <li>Year</li>
+                </ul>
+                <p>If officer IDs are included in the model, a Generalized Estimating Equation (GEE) model with  a logit link, binomial distribution and an exchangeable covariance structure is used to account for within-officer correlation in traffic stops. If officer IDs are not included in the model, a logistic regression is used.</p>
+                <style>
+                    .simpletable {
+                        width: 100%;
+                    }
+                </style>
+                <div class="fs-5 mt-2"><small>{{ results.model_summary_html|safe }}</small></div>
+            </div>
+        </div>
+    </div>
+    <p>
+        <a class="text-decoration-none text-primary fw-bold" href="{{ url_for('star.download') }}">
+            ⬇️ Download the CSV we used for your analysis.
+        </a>
+    </p>
         <h3>Get an email of your report</h3>
 
         <p>Would you like to get an email of your report? Enter your email
@@ -144,27 +209,4 @@
             </form>
         </div>
     {% endif %}
-
-    <div class="panel panel-default">
-        <div class="panel-heading">How we calculated your results:</div>
-        <div class="panel-body">
-
-
-            <p>For analysis with an officer id, a marginal regression model was
-                fit using Generalized Estimating Equations (GEE). Default
-                initialization parameters were used with the exceptions of a
-                logit link, binomial distribution and an exchangeable covariance
-                structure with a robust variance estimator. The fitted model
-                included categorical variables representing light/dark, day of
-                week, year and a B-spline (degree = 6) of time in
-                seconds since midnight. Officer id was specified as the group
-                (cluster or "subject" variable).</p>
-
-            <p>For analysis without an officer id a binary choice logit model
-                was fit. The form of the model was identical to the GEE model
-                but no within-subject covariance structure was specified.</p>
-        </div>
-    </div>
-
-
 {% endblock %}

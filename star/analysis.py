@@ -129,7 +129,6 @@ class Analysis:
         odds_ratios = np.exp(fitted.params)
         odds_ratio_day = odds_ratios["C(light)[T.1]"]
 
-        print(summary)
         return {
             "significant": significant,
             "p_value_day": p_value_day,

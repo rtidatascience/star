@@ -456,6 +456,7 @@ def email():
         "margin-bottom": "0.75in",
         "margin-left": "0.75in",
         "encoding": "UTF-8",
+        "enable-local-file-access": None
     }
 
     directory = tempfile.mkdtemp()
