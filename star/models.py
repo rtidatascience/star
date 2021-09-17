@@ -63,13 +63,13 @@ class VODModel:
 
     def find_date_range(self):
         df = self.data_frame
-        dates = pd.unique(df.datetime.dropna().apply(lambda dt: dt.date()))
+        dates = df.datetime.dropna().dt.to_pydatetime()
         return min(dates), max(dates)
 
     def find_twilight_range(self, start_year=None, stop_year=None):
         if start_year is None or stop_year is None:
             df = self.data_frame
-            years = pd.unique(df.datetime.dropna().apply(lambda dt: dt.year))
+            years = df.datetime.dropna().dt.year.unique()
             min_year = min(years)
             max_year = max(years)
             if min_year > max_year - 5:
@@ -111,6 +111,50 @@ class VODModel:
                 return 0
             else:
                 return -1
+
+        @lru_cache
+        def cached_location_lookup(location, time_of_day, date, local):
+            if time_of_day == "sunset":
+                return location.sunset(date=date, local=local)
+            elif time_of_day == "sunrise":
+                return location.sunrise(date=date, local=local)
+            elif time_of_day == "dusk":
+                return location.dusk(date=date, local=local)
+            elif time_of_day == "dawn":
+                return location.dawn(date=date, local=local)
+
+        def convert_to_light_vector(
+            df, datetime_column: str, location: astral.Location
+        ):
+            timezone = pytz.timezone(location.timezone)
+            df["_local_datetime"] = df[datetime_column].dt.tz_localize(timezone)
+            df["_date"] = df["_local_datetime"].dt.date
+            dates = df["_date"].tolist()
+            df["_sunrise"] = [
+                cached_location_lookup(location, "sunrise", date=date, local=True)
+                for date in dates
+            ]
+            df["_sunset"] = [
+                cached_location_lookup(location, "sunset", date=date, local=True)
+                for date in dates
+            ]
+            df["_dawn"] = [
+                cached_location_lookup(location, "dawn", date=date, local=True)
+                for date in dates
+            ]
+            df["_dusk"] = [
+                cached_location_lookup(location, "dusk", date=date, local=True)
+                for date in dates
+            ]
+            df["_light"] = (df["_sunrise"] <= df["_local_datetime"]) & (
+                df["_local_datetime"] <= df["_sunset"]
+            )
+            df["_dark"] = (df["_local_datetime"] < df["_dawn"]) | (
+                df["_local_datetime"] >= df["_dusk"]
+            )
+            df["_gray"] = ~(df["_light"] | df["_dark"])
+            df["light"] = (df["_light"]).astype(int)
+            return df
 
         def convert_to_dusk(value):
             light_aware_date_time = LightAwareDatetime(value, self.location)
@@ -158,7 +202,8 @@ class VODModel:
         timecheck("After converting to target group")
 
         timecheck("Before converting to light")
-        df["light"] = df["datetime"].apply(convert_to_light)
+        df = convert_to_light_vector(df, "datetime", self.location.location)
+        # df["light"] = df["datetime"].apply(convert_to_light)
         if debug:
             df["dusk"] = df["datetime"].apply(convert_to_dusk)
         timecheck("After converting to light")
@@ -193,7 +238,7 @@ class VODModel:
         tz = pytz.timezone(self.location.timezone)
 
         # Set the unique set of years in our data frame.
-        years = set(pd.unique(df.datetime.apply(lambda dt: dt.year)))
+        years = df.datetime.dt.year.unique()
 
         # Get the DST transition dates for those years.
         dst_transition_dates = [
@@ -224,7 +269,7 @@ class VODModel:
         return df.copy()
 
     def _strip_non_evening_hours(self, df):
-        years = pd.unique(df.datetime.dropna().apply(lambda dt: dt.year))
+        years = df.datetime.dropna().dt.year.unique()
         min_year = min(years)
         max_year = max(years)
         if min_year > max_year - 5:
@@ -239,7 +284,7 @@ class VODModel:
         return df.copy()
 
     def _strip_grey_hours(self, df):
-        df = df[df.light != -1]
+        df = df[~df["_gray"]]
         if df.empty:
             raise EmptyModel
         return df.copy()
@@ -347,6 +392,9 @@ class Location:
 
 
 class LightAwareDatetime:
+
+    __slots__ = ("location", "datetime", "date")
+
     def __init__(self, datetime, location):
         self.location = location
 

@@ -12,7 +12,8 @@ from scipy.special import expit
 
 class Analysis:
     def __init__(self):
-        pass
+        self.python_version_info = python_version()
+        self.statsmodels_version_info = statsmodels.__version__
 
     def analyze(self, df, analysis_type="regression", subset="single"):
 
@@ -128,10 +129,7 @@ class Analysis:
         odds_ratios = np.exp(fitted.params)
         odds_ratio_day = odds_ratios["C(light)[T.1]"]
 
-        # For model info
-        python_version_info = python_version()
-        statsmodels_version_info = statsmodels.__version__
-
+        print(summary)
         return {
             "significant": significant,
             "p_value_day": p_value_day,
@@ -142,6 +140,6 @@ class Analysis:
             "model_summary_html": model_summary_html,
             "odds_ratio_day": odds_ratio_day,  # not used
             "marginal_effect_day": marginal_effect_day,  # not used
-            "python_version_info": python_version_info,
-            "statsmodels_version_info": statsmodels_version_info,
+            "python_version_info": self.python_version_info,
+            "statsmodels_version_info": self.statsmodels_version_info,
         }
