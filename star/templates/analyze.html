@@ -46,18 +46,18 @@
     <p>
         It is important to contextualize the risk ratio with both the absolute risk difference and the prior test of statistical significance. The absolute risk difference may still be small—e.g. a 2% to 1% difference is a ratio of 2, but an absolute difference of only 1%. Even if a risk ratio is large, it could be derived from a small sample size and not be statistically significant. For more on interpreting risk, click “Resources for Understanding Risk” below.
     </p>
-    <div class="my-3">
-        <a class="btn btn-sm btn-outline-primary" data-toggle="collapse" role="button" data-target="#moreOnStatisticalSignificance" aria-selected="false" aria-controls="moreOnStatisticalSignificance">
+    <div class="my-4">
+        <a class="btn btn-outline-primary" data-toggle="collapse" role="button" data-target="#moreOnStatisticalSignificance" aria-selected="false" aria-controls="moreOnStatisticalSignificance" id="moreOnStatisticalSignificance-btn" onclick="selectActive('moreOnStatisticalSignificance-btn')">
             More on Statistical Significance
         </a>
-        <a class="btn btn-sm btn-outline-primary" data-toggle="collapse" role="button" data-target="#resourcesForUnderstandingRisk" aria-selected="false" aria-controls="resourcesForUnderstandingRisk">
+        <a class="btn btn-outline-primary" data-toggle="collapse" role="button" data-target="#resourcesForUnderstandingRisk" aria-selected="false" aria-controls="resourcesForUnderstandingRisk" id="resourcesForUnderstandingRisk-btn" onclick="selectActive('resourcesForUnderstandingRisk-btn')">
             Resources for Understanding Risk
         </a>
-        <a class="btn btn-sm btn-outline-primary" data-toggle="collapse" role="button" data-target="#dataStatisticalTestDetails" aria-selected="false" aria-controls="dataStatisticalTestDetails">
+        <a class="btn btn-outline-primary" data-toggle="collapse" role="button" data-target="#dataStatisticalTestDetails" aria-selected="false" aria-controls="dataStatisticalTestDetails" id="dataStatisticalTestDetails-btn" onclick="selectActive('dataStatisticalTestDetails-btn')">
             Data & Statistical Test Details
         </a>
-        <a class="btn btn-sm btn-outline-primary" type="button" data-toggle="tooltip" data-placement="top" title="Download CSV File used for analysis" href="{{ url_for('star.download') }}">
-            ⬇️ Download Analysis Data
+        <a class="btn btn-outline-primary my-2" type="button" data-toggle="tooltip" data-placement="top" title="Download CSV File used for analysis" href="{{ url_for('star.download') }}">
+            ⬇️ &nbsp;Download Analysis Data
         </a>
     </div>
     <div id="extra-content">
@@ -221,5 +221,17 @@
             </p>
         </form>
     </div>
+    <script>
+        let buttons = ['moreOnStatisticalSignificance-btn', 'resourcesForUnderstandingRisk-btn', 'dataStatisticalTestDetails-btn']
+        function selectActive(id) {
+            buttons.forEach(button => {
+                if (button !== id) {
+                    document.getElementById(button).className = 'btn btn-outline-primary';
+                }
+            });
+            $('#' + id).toggleClass('btn-outline-primary');
+            $('#' + id).toggleClass('btn-primary');
+        }
+    </script>
     {% endif %}
 {% endblock %}
