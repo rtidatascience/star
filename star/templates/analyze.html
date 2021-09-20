@@ -36,177 +36,190 @@
             </div> 
        </div>
     </div>
+    <h4>Interpretation</h4>
     <p>
         The first part of the analysis is a statistical test on the relationship of light versus dark on the group of interest (the target group selected above), while accounting for other variables like time of day and day of the week. As an oversimplification, if the relationship is statistically significant, this means that the relationship is strong enough to merit further investigation. For a more in-depth explanation, click “More on Statistical Significance” below.
     </p>
-    <button class="btn btn-primary mt-3 mb-4" type="button" data-toggle="collapse" data-target="#moreOnStatisticalSignificance" aria-expanded="false" aria-controls="moreOnStatisticalSignificance">
-        More on Statistical Significance
-    </button>
-    <div class="fs-5">
-        <div class="collapse" id="moreOnStatisticalSignificance">
-            <div class="card card-body fs-6">
-                <h4 class="my-0 fs-5 fw-bold">More on Statistical Significance</h4>
-                <p>Despite its widespread use, statistical significance and hypothesis testing is often misinterpreted. Here we provide more explanation of what the statistical test can tell us.<br /><br />
-                A more technical definition is that a statistical test answers this question: if we assume there’s no relationship for traffic stops during light periods and dark periods among the target group, how unlikely are these results?<br /><br /> 
-                The output of this statistical test is a p-value. A large p-value (greater than 0.05) means that, if we assume there was no relationship, it's likely we would see this result and a small p-value (less than 0.05) means it's unlikely we would see this result. A small p-value provides evidence for the hypothesis that racial disproportionality exists. However, a small p-value and statistically significant results are more likely with a larger sample size, which is common with traffic stop data. Thus, it is important to also review the risk ratio and risk difference for the size of the effect if results are statistically significant.<br /><br />
-                While the statistical test is useful, it has several important limitations to consider:</p>
-                <ul>
-                    <li>Even though the p-value is a continuous number, it does not tell us the magnitude or direction of racial disproportionality if it exists.</li>
-                    <li>A large p-value, which results in a not statistically significant relationship, does not provide evidence for the absence of racial disproportionality.</li>
-                    <li>The statistical test does not give us a binary yes or no answer to whether there is a systemic issue with racial disproportionality in traffic stops—it can only provide evidence or fail to provide evidence for the hypothesis that racial disproportionality exists.</li>
-                </ul>
-                <p>For more on understanding statistical testing and p-values, see the following resources:</p>
-                <ul>
-                    <li><a class="text-info text-decoration-none" href="https://archive.md/ejRvY" target="_blank">P-Value and Statistical Significance | Simply Psychology</a></li>
-                    <li><a class="text-info text-decoration-none" href="https://archive.md/XWJwL" target="_blank">Statisticians Found One Thing They Can Agree On: It’s Time To Stop Misusing P-Values | FiveThirtyEight</a></li>
-                    <li><a class="text-info text-decoration-none" href="https://www.tandfonline.com/doi/full/10.1080/00031305.2016.1154108" target="_blank">[Open Access Link] Wasserstein, Ronald L., and Nicole A. Lazar. "The ASA statement on p-values: context, process, and purpose." (2016): 129-133</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
     <p>
         The second part of the analysis is the risk ratio, which can tell us the magnitude of disproportionality. The risk ratio is made up of two numbers: the average probability of being a member of the target group during the light period and the average probability of being a member of the target group during the dark period. The risk ratio is the ratio of these two numbers. If racial disproportionality exists, we expect the probability of being a member of the target group (assuming the target group has dark-colored skin) to be much higher during the light period (compared to the dark period) and the risk ratio much larger than 1.
     </p>
     <p>
         It is important to contextualize the risk ratio with both the absolute risk difference and the prior test of statistical significance. The absolute risk difference may still be small—e.g. a 2% to 1% difference is a ratio of 2, but an absolute difference of only 1%. Even if a risk ratio is large, it could be derived from a small sample size and not be statistically significant. For more on interpreting risk, click “Resources for Understanding Risk” below.
     </p>
-    <button class="btn btn-primary mt-3 mb-4" type="button" data-toggle="collapse" data-target="#resourcesForUnderstandingRisk" aria-expanded="false" aria-controls="resourcesForUnderstandingRisk">
-        Resources for Understanding Risk
-    </button>
-    <div class="fs-5">
-        <div class="collapse" id="resourcesForUnderstandingRisk">
-            <div class="card card-body fs-6">
-                <h4 class="my-0 fs-5 fw-bold">Resources for Understanding Risk</h4>
-                <ul class="mt-3">
-                    <li><a class="text-info text-decoration-none" href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4640017/" target="_blank">[Open Access Link] Ranganathan, Priya, Rakesh Aggarwal, and C. S. Pramesh. "Common pitfalls in statistical analysis: Odds versus risk." Perspectives in clinical research 6.4 (2015): 222</a></li>
-                    <li><a class="text-info text-decoration-none" href="https://academic.oup.com/ndt/article/32/suppl_2/ii13/3056571" target="_blank">[Open Access Link] Noordzij, Marlies, et al. "Relative risk versus absolute risk: one cannot be interpreted without the other." Nephrology Dialysis Transplantation 32.suppl_2 (2017): ii13-ii18.</a></li>
-                </ul>
-            </div>
-        </div>
+    <div class="my-3">
+        <a class="btn btn-sm btn-outline-primary" data-toggle="collapse" role="button" data-target="#moreOnStatisticalSignificance" aria-selected="false" aria-controls="moreOnStatisticalSignificance">
+            More on Statistical Significance
+        </a>
+        <a class="btn btn-sm btn-outline-primary" data-toggle="collapse" role="button" data-target="#resourcesForUnderstandingRisk" aria-selected="false" aria-controls="resourcesForUnderstandingRisk">
+            Resources for Understanding Risk
+        </a>
+        <a class="btn btn-sm btn-outline-primary" data-toggle="collapse" role="button" data-target="#dataStatisticalTestDetails" aria-selected="false" aria-controls="dataStatisticalTestDetails">
+            Data & Statistical Test Details
+        </a>
+        <a class="btn btn-sm btn-outline-primary" type="button" data-toggle="tooltip" data-placement="top" title="Download CSV File used for analysis" href="{{ url_for('star.download') }}">
+            ⬇️ Download Analysis Data
+        </a>
     </div>
-    <button class="btn btn-primary mt-3 mb-4" type="button" data-toggle="collapse" data-target="#dataStatisticalTestDetails" aria-expanded="false" aria-controls="dataStatisticalTestDetails">
-        Data & Statistical Test Details
-    </button>
-    <div class="fs-5">
-        <div class="collapse" id="dataStatisticalTestDetails">
-            <div class="card card-body fs-6">
-                <h4 class="my-0 fs-5 fw-bold">Data & Statistical Test Details</h4>
-                <p>Analysis was performed using Python {{results.python_version_info}}
-                and statsmodels version {{results.statsmodels_version_info}}</p>
-                <dl class="small">
-                    <dt>Date and time analysis was run</dt>
-                    <dd>{{ datetime }}</dd>
-                    <dt>Original filename</dt>
-                    <dd>{{ original_filename }}</dd>
-                    <dt>Date range of cases</dt>
-                    <dd>{{ date_range }}</dd>
-                    <dt>Intertwilight period (ITP) range</dt>
-                    <dd>{{ itp_range }}</dd>
-                    <dt>Original number of stop records</dt>
-                    <dd>{{ "{:,d}".format(original_record_count) }}</dd>
-                    <dt>Number of stop records used for analysis</dt>
-                    <dd>{{ "{:,d}".format(final_record_count) }}</dd>
-                    <dt>Number of daylight events in ITP</dt>
-                    <dd>{{ light_count }}</dd>
-                    <dt>Number of darkness events in ITP</dt>
-                    <dd>{{ dark_count }}</dd>
-                </dl>
-                <p class="mt-2"><strong>
-                    Columns in the CSV we used for your analysis:
-                </strong></p>
-                <dl class="small">
-                    <dt>datetime</dt>
-                    <dd>The date and time of the traffic stop</dd>
-                    <dt>original_target</dt>
-                    <dd>The data from the column you specified as your target column.</dd>
-                    <dt>target</dt>
-                    <dd>
+    <div id="extra-content">
+        <div class="collapse" data-parent="#extra-content" id="moreOnStatisticalSignificance">
+            <h4 class="my-0">More on Statistical Significance</h4>
+            <p>Despite its widespread use, statistical significance and hypothesis testing is easy to misinterpret. Here we provide more explanation of what the statistical test can tell us.<br /><br />
+            A more technical definition is that a statistical test answers this question: <em>if we assume there’s no relationship for traffic stops during light periods and dark periods among the target group, how unlikely are these results?</em><br /><br /> 
+            The output of this statistical test is a p-value. A large p-value (greater than 0.05) means that, if we assume there was no relationship, it's likely we would see this result and a small p-value (less than 0.05) means it's unlikely we would see this result. A small p-value provides evidence for the hypothesis that racial disproportionality exists. However, a small p-value and statistically significant results are more likely with a larger sample size, which is common with traffic stop data. Thus, it is important to also review the risk ratio and risk difference for the size of the effect if results are statistically significant.<br /><br />
+            While the statistical test is useful, it has several important limitations to consider:</p>
+            <ul>
+                <li>Even though the p-value is a continuous number, it <strong>does not</strong> tell us the magnitude or direction of racial disproportionality if it exists.</li>
+                <li>A large p-value, which results in a not statistically significant relationship, <strong>does not</strong> provide evidence for the absence of racial disproportionality.</li>
+                <li>The statistical test <strong>does not</strong> give us a binary yes or no answer to whether there is a systemic issue with racial disproportionality in traffic stops—it can only provide evidence or fail to provide evidence for the hypothesis that racial disproportionality exists.</li>
+            </ul>
+            <p>For more on understanding statistical testing and p-values, see the following resources:</p>
+            <ul>
+                <li><a href="https://archive.md/ejRvY" target="_blank">P-Value and Statistical Significance | Simply Psychology</a></li>
+                <li><a href="https://archive.md/XWJwL" target="_blank">Statisticians Found One Thing They Can Agree On: It’s Time To Stop Misusing P-Values | FiveThirtyEight</a></li>
+                <li><a href="https://www.tandfonline.com/doi/full/10.1080/00031305.2016.1154108" target="_blank">[Open Access Link]</a> Wasserstein, Ronald L., and Nicole A. Lazar. "The ASA statement on p-values: context, process, and purpose." (2016): 129-133</li>
+            </ul>
+        </div>
+        <div class="collapse" data-parent="#extra-content" id="resourcesForUnderstandingRisk">
+            <h4 class="my-0 ">Resources for Understanding Risk</h4>
+            <ul class="mt-3">
+                <li><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4640017/" target="_blank">[Open Access Link]</a> Ranganathan, Priya, Rakesh Aggarwal, and C. S. Pramesh. "Common pitfalls in statistical analysis: Odds versus risk." Perspectives in clinical research 6.4 (2015): 222</li>
+                <li><a href="https://academic.oup.com/ndt/article/32/suppl_2/ii13/3056571" target="_blank">[Open Access Link]</a> Noordzij, Marlies, et al. "Relative risk versus absolute risk: one cannot be interpreted without the other." Nephrology Dialysis Transplantation 32.suppl_2 (2017): ii13-ii18.</li>
+            </ul>
+        </div>
+        <div class="collapse" data-parent="#extra-content" id="dataStatisticalTestDetails">
+            <h4 class="my-0 ">Data & Statistical Test Details</h4>
+            <p>Analysis was performed using Python {{results.python_version_info}}
+            and statsmodels version {{results.statsmodels_version_info}}</p>
+            <table class="table small">
+                <tr>
+                    <th>Date and time analysis was run</th>
+                    <td>{{ datetime }}</td>
+                </tr>
+                <tr>                    
+                    <th>Original filename</th>
+                    <td>{{ original_filename }}</td>
+                </tr>                
+                    <th>Date range of cases</th>
+                    <td>{{ date_range }}</td>
+                <tr>
+                    <th>Intertwilight period (ITP) range</th>
+                    <td>{{ itp_range }}</td>
+                </tr>
+                    <th>Original number of stop records</th>
+                    <td>{{ "{:,d}".format(original_record_count) }}</td>
+                <tr>
+                    <th>Number of stop records used for analysis</th>
+                    <td>{{ "{:,d}".format(final_record_count) }}</td>
+                </tr>
+                    <th>Number of daylight events in ITP</th>
+                    <td>{{ light_count }}</td>
+                <tr>
+                    <th>Number of darkness events in ITP</th>
+                    <td>{{ dark_count }}</td>
+                </tr>                    
+            </table>
+            <p class="mt-2"><strong>
+                Columns in the CSV we used for your analysis:
+            </strong></p>
+            <table class="table small">
+                <tr>                    
+                    <th>datetime</th>
+                    <td>The date and time of the traffic stop</td>
+                </tr>
+                    <th>original_target</th>
+                    <td>The data from the column you specified as your target column.</td>
+                <tr>    
+                    <th>target</th>
+                    <td>
                         0 if the stop was not in the group you were checking for profiling,
                         1 if the stop was in the group.
-                    </dd>
-                    <dt>light</dt>
-                    <dd>0 if the stop was at dark, 1 if it was during the light.</dd>
-                    <dt>year</dt>
-                    <dd>The year of the traffic stop.</dd>
-                    <dt>day_of_week</dt>
-                    <dd>The day of the week of the stop, from 1 for Sunday to 7 for
+                    </td>
+                </tr>    
+                    <th>light</th>
+                    <td>0 if the stop was at dark, 1 if it was during the light.</td>
+                <tr>    
+                    <th>year</th>
+                    <td>The year of the traffic stop.</td>
+                </tr>    
+                    <th>day_of_week</th>
+                    <td>The day of the week of the stop, from 1 for Sunday to 7 for
                         Saturday.
-                    </dd>
-                    <dt>time_in_seconds</dt>
-                    <dd>The number of seconds since the midnight before the stop.</dd>
+                    </td>
+                <tr>    
+                    <th>time_in_seconds</th>
+                    <td>The number of seconds since the midnight before the stop.</td>
+                </tr>    
                     {% if session['columns']['officer_id_column'] %}
-                        <dt>officerid</dt>
-                        <dd>The ID of the officer making the stop.</dd>
+                    <tr>
+                        <th>officerid</th>
+                        <td>The ID of the officer making the stop.</td>
+                    </tr>
                     {% endif %}
-                </dl>
-                <p>The full model attempts to predict target group membership based on the following variables:</p>
-                <ul>
-                    <li>Light (1) or Dark (0) Intertwilight Period</li>
-                    <li>Day of Week</li>
-                    <li>Time of Day (B-spline with 6 degrees of freedom)</li>
-                    <li>Year</li>
-                </ul>
-                <p>If officer IDs are included in the model, a Generalized Estimating Equation (GEE) model with  a logit link, binomial distribution and an exchangeable covariance structure is used to account for within-officer correlation in traffic stops. If officer IDs are not included in the model, a logistic regression is used.</p>
-                <style>
-                    .simpletable {
-                        width: 100%;
-                    }
-                </style>
-                <div class="fs-5 mt-2"><small>{{ results.model_summary_html|safe }}</small></div>
-            </div>
+            </table>
+            <p><strong>Model Info</strong></p>
+            <p>The full model attempts to predict target group membership based on the following variables:</p>
+            <ul>
+                <li>Light (1) or Dark (0) Intertwilight Period</li>
+                <li>Day of Week</li>
+                <li>Time of Day (B-spline with 6 degrees of freedom)</li>
+                <li>Year</li>
+            </ul>
+            <p>If officer IDs are included in the model, a Generalized Estimating Equation (GEE) model with  a logit link, binomial distribution and an exchangeable covariance structure is used to account for within-officer correlation in traffic stops. If officer IDs are not included in the model, a logistic regression is used.</p>
+            <style>
+                .simpletable {
+                    width: 100%;
+                }
+            </style>
+            <p><strong>Model Output</strong></p>
+            <div class="mt-2"><small>{{ results.model_summary_html|safe }}</small></div>
         </div>
     </div>
-    <p>
-        <a class="text-decoration-none text-primary fw-bold" href="{{ url_for('star.download') }}">
-            ⬇️ Download the CSV we used for your analysis.
-        </a>
-    </p>
-        <h3>Get an email of your report</h3>
+    <h3>Get an email of your report</h3>
 
-        <p>Would you like to get an email of your report? Enter your email
-            below.</p>
+    <p>Would you like to get an email of your report? Enter your email
+        below.</p>
 
-        <div class="row">
-            <form action="{{ url_for('star.email') }}" method="POST">
-                <div class="form-group">
-                    <label class="fs-5 fw-bold" for="email_input">Email</label>
-                    <input type="email" class="form-control my-3"
-                            required="required"
-                            id="email_input"
-                            name="email"/>
-                </div>
-                <div class="checkbox">
-                    <label class="fs-5" for="optin_input">
-                        <input class="form-check-input" type="checkbox" id="optin_input" name="optin"
-                                checked="checked" />
-                        I would like to receive follow-up emails from RTI
-                        about criminal justice.
-                    </label>
-                </div>
-                <div class="form-group">
-                    <label class="fs-5 fw-bold mt-4" for="title_input">Title (optional)</label>
-                    <input type="text" class="form-control my-3"
-                            id="title_input"
-                            name="title"/>
-                </div>
-                <div class="form-group">
-                    <label class="fs-5 fw-bold" for="name_input">Name (optional)</label>
-                    <input type="text" class="form-control my-3"
-                            id="name_input"
-                            name="name"/>
-                </div>
-                <div class="form-group">
-                    <label class="fs-5 fw-bold" for="organization_input">Organization (optional)</label>
-                    <input type="text" class="form-control my-3"
-                            id="organization_input"
-                            name="organization"/>
-                </div>
-                <p>
-                    <button type="submit" class="btn btn-primary mt-2 mb-3">
-                        Get your report
-                    </button>
-                </p>
-            </form>
-        </div>
+    <div class="row">
+        <form action="{{ url_for('star.email') }}" method="POST">
+            <div class="form-group">
+                <label class="fs-5 fw-bold" for="email_input">Email</label>
+                <input type="email" class="form-control my-3"
+                        required="required"
+                        id="email_input"
+                        name="email"/>
+            </div>
+            <div class="checkbox">
+                <label class="fs-5" for="optin_input">
+                    <input class="form-check-input" type="checkbox" id="optin_input" name="optin"
+                            checked="checked" />
+                    I would like to receive follow-up emails from RTI
+                    about criminal justice.
+                </label>
+            </div>
+            <div class="form-group">
+                <label class="fs-5 fw-bold mt-4" for="title_input">Title (optional)</label>
+                <input type="text" class="form-control my-3"
+                        id="title_input"
+                        name="title"/>
+            </div>
+            <div class="form-group">
+                <label class="fs-5 fw-bold" for="name_input">Name (optional)</label>
+                <input type="text" class="form-control my-3"
+                        id="name_input"
+                        name="name"/>
+            </div>
+            <div class="form-group">
+                <label class="fs-5 fw-bold" for="organization_input">Organization (optional)</label>
+                <input type="text" class="form-control my-3"
+                        id="organization_input"
+                        name="organization"/>
+            </div>
+            <p>
+                <button type="submit" class="btn btn-primary mt-2 mb-3">
+                    Get your report
+                </button>
+            </p>
+        </form>
+    </div>
     {% endif %}
 {% endblock %}
