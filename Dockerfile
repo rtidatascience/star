@@ -5,7 +5,7 @@ ENV MANAGE_ARG=server
 COPY . /app
 WORKDIR /app
 
-RUN apt-get update && apt-get install wkhtmltopdf -y
+RUN apt-get update && apt-get install wkhtmltopdf -y --fix-missing
 
 RUN pip install -r requirements.txt
 

@@ -73,186 +73,134 @@
     </div>
 </div>
 
-{% if results.p_value_day < 0.05 %}
-    <p>
-        Based on statistical significance alone (p<0.05), this evidence
-        suggests there <em>may</em> be racial disproportionality in
-        traffic stops;
-        in-depth analysis of the data is recommended.  All estimates are
-        sensitive to model specification and the user may wish to
-        perform
-        additional analysis. Given the typically large sample sizes
-        available for traffic stop data, we recommend that
-        interpretation
-        of results be more focused on whether the size of the difference
-        in the reported percentages (or, equivalently, their ratio) is
-        meaningfully large for your community.
-    </p>
-{% else %}
-    <p>
-        Based on statistical significance alone (p>=0.05), this evidence
-        does not
-        suggest the existence of racial disproportionality in traffic
-        stops.
-        However, given the typically large sample sizes available for
-        traffic stop data,
-        we recommend that interpretation of results be more focused on
-        whether the size
-        of the difference in the reported percentages (or, equivalently,
-        their ratio)
-        is meaningfully large for your community.
-    </p>
-{% endif %}
-
 <p>
-    The regression model indicates that the risk of being in the
-    reference group was
-    {{ "%.2f%%" | format(results.light_prob) }}
-    during the light portion of the intertwilight period and
-    {{ "%.2f%%" | format(results.dark_prob) }}
-    during the dark portion of the intertwilight period, with a
-    corresponding risk ratio of
-    {{ "%.2f" | format(results.risk_ratio_day) }}. The p-value for the
-    effect of light
-    versus dark was
-    {{ "%.4f" | format(results.p_value_day) }}.
+    As a summary, the Veil of Darkness approach compares the likelihood of a traffic stop occurring for a member of the target group during two time periods: the light intertwilight period and the dark intertwilight period. If target group membership is significantly more likely during the light period, when skin color may be visible, this could be evidence of racially disproportionate traffic stops.
 </p>
+
+<h3>Results Summary</h3>
+
+<ul>
+    <li>
+        The relationship between membership in the target group and traffic stops during the light and dark intertwilight periods <strong>is {% if not results.significant %}<u>not</u>{% endif %} statistically significant</strong> (p={{ "%.4f" | format(results.p_value_day) }})
+    </li>
+    <li>
+        The risk of being in the target group during the light portion of the intertwilight period is {{ "%.2f%%" | format(results.light_prob) }} and {{ "%.2f%%" | format(results.dark_prob) }} during the dark period. The relative risk ratio is {{ "%.2f" | format(results.risk_ratio_day) }} and the absolute risk difference is {{ "%.2f%%" | format(results.risk_difference_day) }}.
+    </li>
+</ul>
 
 <div class="break"></div>
 
-<h3>Methodology</h3>
+<h3>Interpretation</h3>
 
 <p>
-    To study the racial distribution of traffic stops, the tool uses
-    the Veil of Darkness (VOD) approach, which is based on the logic
-    that police officers are less capable of determining the race of
-    a motorist after dark than they are during daylight. Using this
-    method, the existence of racial disproportionality in traffic
-    stops is assessed by comparing the race distribution of stops
-    made during daylight to the race distribution of stops made
-    after dark, after adjusting for other factors in a regression
-    model. The analysis is limited to stops that occur during the
-    evening intertwilight period (roughly between 5:00 PM and 9:00
-    PM, depending on location) in order to reduce the variation in
-    travel patterns that are conditional on time of day.
+    The first part of the analysis is a statistical test on the relationship of light versus dark on the group of interest (the target group selected above), while accounting for other variables like time of day and day of the week. As an oversimplification, if the relationship is statistically significant, this means that the relationship is strong enough to merit further investigation. For a more in-depth explanation, see “More on Statistical Significance” below.
+</p>
+
+<h4>More on Statistical Significance</h4>
+
+<p>
+    Despite its widespread use, statistical significance and hypothesis testing is often misinterpreted. Here we provide more explanation of what the statistical test can tell us.<br /><br />
+    A more technical definition is that a statistical test answers this question: if we assume there’s no relationship for traffic stops during light periods and dark periods among the target group, how unlikely are these results?<br /><br /> 
+    The output of this statistical test is a p-value. A large p-value (greater than 0.05) means that, if we assume there was no relationship, it's likely we would see this result and a small p-value (less than 0.05) means it's unlikely we would see this result. A small p-value provides evidence for the hypothesis that racial disproportionality exists. However, a small p-value and statistically significant results are more likely with a larger sample size, which is common with traffic stop data. Thus, it is important to also review the risk ratio and risk difference for the size of the effect if results are statistically significant.<br /><br />
+    While the statistical test is useful, it has several important limitations to consider:
+</p>
+<ul>
+    <li>Even though the p-value is a continuous number, it does not tell us the magnitude or direction of racial disproportionality if it exists.</li>
+    <li>A large p-value, which results in a not statistically significant relationship, does not provide evidence for the absence of racial disproportionality.</li>
+    <li>The statistical test does not give us a binary yes or no answer to whether there is a systemic issue with racial disproportionality in traffic stops—it can only provide evidence or fail to provide evidence for the hypothesis that racial disproportionality exists.</li>
+</ul>
+<p>For more on understanding statistical testing and p-values, see the following resources:</p>
+<ul>
+    <li><a href="https://archive.md/ejRvY">P-Value and Statistical Significance | Simply Psychology</a></li>
+    <li><a href="https://archive.md/XWJwL"">Statisticians Found One Thing They Can Agree On: It’s Time To Stop Misusing P-Values | FiveThirtyEight</a></li>
+    <li><a href="https://www.tandfonline.com/doi/full/10.1080/00031305.2016.1154108">[Open Access Link] Wasserstein, Ronald L., and Nicole A. Lazar. "The ASA statement on p-values: context, process, and purpose." (2016): 129-133</a></li>
+</ul>
+
+<p>
+    The second part of the analysis is the risk ratio, which can tell us the magnitude of disproportionality. The risk ratio is made up of two numbers: the average probability of being a member of the target group during the light period and the average probability of being a member of the target group during the dark period. The risk ratio is the ratio of these two numbers. If racial disproportionality exists, we expect the probability of being a member of the target group (assuming the target group has dark-colored skin) to be much higher during the light period (compared to the dark period) and the risk ratio much larger than 1.
 </p>
 
 <p>
-    The VOD method was developed and first employed by Jeffery
-    Grogger and Greg Ridgeway in an analysis of traffic stops in
-    Oakland, California, and Cincinnati, Ohio. The method has also
-    been used in studies focusing on the nature of traffic stops in
-    Minneapolis, Minnesota, Syracuse, New York, and more recently in
-    San Diego, California, and the state of Connecticut.
+    It is important to contextualize the risk ratio with both the absolute risk difference and the prior test of statistical significance. The absolute risk difference may still be small—e.g. a 2% to 1% difference is a ratio of 2, but an absolute difference of only 1%. Even if a risk ratio is large, it could be derived from a small sample size and not be statistically significant. For more on interpreting risk, see “Resources for Understanding Risk” below.
 </p>
+
+<h4>Resources for Understanding Risk</h4>
+
+<ul>
+    <li><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4640017/">[Open Access Link] Ranganathan, Priya, Rakesh Aggarwal, and C. S. Pramesh. "Common pitfalls in statistical analysis: Odds versus risk." Perspectives in clinical research 6.4 (2015): 222</a></li>
+    <li><a href="https://academic.oup.com/ndt/article/32/suppl_2/ii13/3056571">[Open Access Link] Noordzij, Marlies, et al. "Relative risk versus absolute risk: one cannot be interpreted without the other." Nephrology Dialysis Transplantation 32.suppl_2 (2017): ii13-ii18.</a></li>
+</ul>
+
+<h4>Data & Statistical Test Details</h4>
 
 <p>
-    Our tool incorporates one enhancement from these previous
-    studies.  That is, our model accounts for within-officer
-    correlation that is likely to occur (when this information is
-    available in the data). By doing so, we recognize that officers
-    may have inherent differences in the percentage of a racial or
-    ethnic subset of the population that they are likely to
-    encounter. These differences may be caused by factors such as
-    geographic deployment or unit assignment.
+    Analysis was performed using Python {{results.python_version_info}}
+    and statsmodels version {{results.statsmodels_version_info}}
 </p>
 
-<h3>How to interpret results</h3>
+<dl class="small">
+    <dt>Date and time analysis was run</dt>
+    <dd>{{ datetime }}</dd>
+    <dt>Original filename</dt>
+    <dd>{{ original_filename }}</dd>
+    <dt>Date range of cases</dt>
+    <dd>{{ date_range }}</dd>
+    <dt>Intertwilight period (ITP) range</dt>
+    <dd>{{ itp_range }}</dd>
+    <dt>Original number of stop records</dt>
+    <dd>{{ "{:,d}".format(original_record_count) }}</dd>
+    <dt>Number of stop records used for analysis</dt>
+    <dd>{{ "{:,d}".format(final_record_count) }}</dd>
+    <dt>Number of daylight events in ITP</dt>
+    <dd>{{ light_count }}</dd>
+    <dt>Number of darkness events in ITP</dt>
+    <dd>{{ dark_count }}</dd>
+</dl>
+<p><strong>
+    Columns in the CSV we used for your analysis:
+</strong></p>
+<dl class="small">
+    <dt>datetime</dt>
+    <dd>The date and time of the traffic stop</dd>
+    <dt>original_target</dt>
+    <dd>The data from the column you specified as your target column.</dd>
+    <dt>target</dt>
+    <dd>
+        0 if the stop was not in the group you were checking for profiling,
+        1 if the stop was in the group.
+    </dd>
+    <dt>light</dt>
+    <dd>0 if the stop was at dark, 1 if it was during the light.</dd>
+    <dt>year</dt>
+    <dd>The year of the traffic stop.</dd>
+    <dt>day_of_week</dt>
+    <dd>The day of the week of the stop, from 1 for Sunday to 7 for
+        Saturday.
+    </dd>
+    <dt>time_in_seconds</dt>
+    <dd>The number of seconds since the midnight before the stop.</dd>
+    {% if session['columns']['officer_id_column'] %}
+        <dt>officerid</dt>
+        <dd>The ID of the officer making the stop.</dd>
+    {% endif %}
+</dl>
+<p>The full model attempts to predict target group membership based on the following variables:</p>
+<ul>
+    <li>Light (1) or Dark (0) Intertwilight Period</li>
+    <li>Day of Week</li>
+    <li>Time of Day (B-spline with 6 degrees of freedom)</li>
+    <li>Year</li>
+</ul>
 
-<p>
-    One benefit of the VOD approach is its statistical
-    quantification of
-    disproportionality present in a community using a reliable data
-    source.  If the reported <strong>risk ratio</strong> (i.e., risk
-    of being in a
-    traffic stop reference group during light vs. dark periods) is
-    acceptably close to 1.0, or in other words if the
-    <strong>percentages</strong>
-    of
-    reference group traffic stops during light vs. dark
-    intertwilight
-    are acceptably close to one another, it suggests that daylight
-    was
-    not meaningfully associated with the race or ethnicity of the
-    driver
-    who was stopped.  Alternatively, if the risk ratio is
-    meaningfully
-    <em>greater than 1.0</em>, it suggests possible racial
-    disproportionality
-    (i.e., that reference group motorists, a racial or ethnic subset
-    of
-    the population of interest, are more likely to be among those
-    stopped during times when visibility is higher compared to times
-    when visibility is lower).
-</p>
+<div class="break"></div>
 
-<p>
-    We provide the <strong>level of statistical
-    significance</strong> for the effect of daylight vs.
-    intertwilight as well.  Significance levels between 0 and 0.05
-    (when accompanied
-    by risk ratios <em>greater than 1.0</em>) are more indicative of
-    a potential problem with
-    disproportionality, and significance levels between 0.05 and 1.0
-    are less
-    indicative of a potential problem.  However, given the large
-    sample sizes
-    available for traffic stop data, interpretation of results
-    should be more
-    focused on the size of the difference in the percentages (or,
-    equivalently,
-    their ratio).
-</p>
-<p>
-    This tool provides a quantified description of traffic stop
-    disparities in a community. The results can be useful in a
-    number
-    of ways: to determine whether there is meaningful evidence of
-    racial disproportionality in traffic stops for a given reference
-    group, to compare results across various subgroups of stops
-    (e.g.,
-    across gender, across police units) to pinpoint subgroups that
-    need
-    more attention than others, and to compare results before vs.
-    after
-    an intervention is implemented. 
-</p>
-<p>
-    This method identifies patterns of disproportionate contact with
-    law enforcement in regard to traffic stops for selected reference
-    groups in a defined time range. This tool does <strong>not</strong>
-    alone conclusively
-    identify agencies and/or officers that are engaging in the
-    practice of racial bias. Finally, this method does not analyze or provide
-    context for the reason or cause for a traffic stop or set of
-    traffic stops to be conducted by a law enforcement officer.
-</p>
-<p>
-    This tool does not provide a customized analysis for each
-    dataset and results should be considered preliminary. Further analyses
-    may still be warranted to better understand the results and verify
-    that the preliminary analysis has been conducted in a proper and
-    legitimate manner.
-</p>
-
-<h3>How we calculated your results</h3>
-
-<p>Traffic stop profiling analysis was performed using Python 3.9
-    and statsmodels version 0.12.2</p>
-
-<p>For analysis with an officer id, a marginal regression model was
-    fit using Generalized Estimating Equations (GEE). Default
-    initialization parameters were used with the exceptions of a
-    logit link, binomial distribution and an exchangeable covariance
-    structure with a robust variance estimator. The fitted model
-    included categorical variables representing light/dark, day of
-    week, year and a B-spline (degree = 6) of time in
-    seconds since midnight. Officer id was specified as the group
-    (cluster or "subject" variable).</p>
-
-<p>For analysis without an officer id a binary choice logit model
-    was fit. The form of the model was identical to the GEE model
-    but no within-subject covariance structure was specified.</p>
+<p>If officer IDs are included in the model, a Generalized Estimating Equation (GEE) model with  a logit link, binomial distribution and an exchangeable covariance structure is used to account for within-officer correlation in traffic stops. If officer IDs are not included in the model, a logistic regression is used.</p>
+<style>
+    .simpletable {
+        width: 100%;
+    }
+</style>
+<div class="fs-5"><small>{{ results.model_summary_html|safe }}</small></div>
 
 </body>
 </html>

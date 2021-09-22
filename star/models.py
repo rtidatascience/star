@@ -10,28 +10,32 @@ from star.default_config import GOOGLE_MAPS_API_KEY
 
 
 def load_csv_as_dataframe(path, columns=None, pickled=True):
-    if pickled and path.with_suffix('.pkl').is_file():
-        return pd.read_pickle(str(path.with_suffix('.pkl')))
+    if pickled and path.with_suffix(".pkl").is_file():
+        return pd.read_pickle(str(path.with_suffix(".pkl")))
 
     if columns:
-        usecols = [columns['date_column'], columns['time_column'],
-                   columns['target_column']]
-        if columns.get('officer_id_column'):
-            usecols.append(columns['officer_id_column'])
-        return pd.read_csv(path,
-                           parse_dates=columns['datetime_columns'],
-                           # usecols=usecols,
-                           )
+        usecols = [
+            columns["date_column"],
+            columns["time_column"],
+            columns["target_column"],
+        ]
+        if columns.get("officer_id_column"):
+            usecols.append(columns["officer_id_column"])
+        return pd.read_csv(
+            path,
+            parse_dates=columns["datetime_columns"],
+            # usecols=usecols,
+        )
     else:
         return pd.read_csv(path)
 
 
 def pickle_dataframe(path, dataframe):
-    return dataframe.to_pickle(str(path.with_suffix('.pkl')))
+    return dataframe.to_pickle(str(path.with_suffix(".pkl")))
 
 
 def clear_pickle(path):
-    pickle = path.with_suffix('.pkl')
+    pickle = path.with_suffix(".pkl")
     if pickle.exists():
         pickle.unlink()
 
@@ -39,7 +43,8 @@ def clear_pickle(path):
 def within_dst_range(datetime, transition_dates):
     return any(
         (td - dt.timedelta(days=30)) <= datetime < (td + dt.timedelta(days=30))
-        for td in transition_dates)
+        for td in transition_dates
+    )
 
 
 class EmptyModel(Exception):
@@ -58,13 +63,13 @@ class VODModel:
 
     def find_date_range(self):
         df = self.data_frame
-        dates = pd.unique(df.datetime.dropna().apply(lambda dt: dt.date()))
+        dates = df.datetime.dropna().dt.to_pydatetime()
         return min(dates), max(dates)
 
     def find_twilight_range(self, start_year=None, stop_year=None):
         if start_year is None or stop_year is None:
             df = self.data_frame
-            years = pd.unique(df.datetime.dropna().apply(lambda dt: dt.year))
+            years = df.datetime.dropna().dt.year.unique()
             min_year = min(years)
             max_year = max(years)
             if min_year > max_year - 5:
@@ -78,10 +83,11 @@ class VODModel:
         twilights = []
         for year in range(start_year, stop_year + 1):
             for date in solstice_dates:
-                for delta in range(-30,30):
+                for delta in range(-30, 30):
                     dusk = self.location.dusk(
-                        date=dt.date(year=year, month=date["month"],
-                                     day=date["day"]) + dt.timedelta(days=delta))
+                        date=dt.date(year=year, month=date["month"], day=date["day"])
+                        + dt.timedelta(days=delta)
+                    )
                     twilights.append(dusk.time())
         return min(twilights), max(twilights)
 
@@ -106,11 +112,56 @@ class VODModel:
             else:
                 return -1
 
+        @lru_cache
+        def cached_location_lookup(location, time_of_day, date, local):
+            if time_of_day == "sunset":
+                return location.sunset(date=date, local=local)
+            elif time_of_day == "sunrise":
+                return location.sunrise(date=date, local=local)
+            elif time_of_day == "dusk":
+                return location.dusk(date=date, local=local)
+            elif time_of_day == "dawn":
+                return location.dawn(date=date, local=local)
+
+        def convert_to_light_vector(
+            df, datetime_column: str, location: astral.Location
+        ):
+            timezone = pytz.timezone(location.timezone)
+            df["_local_datetime"] = df[datetime_column].dt.tz_localize(timezone)
+            df["_date"] = df["_local_datetime"].dt.date
+            dates = df["_date"].tolist()
+            df["_sunrise"] = [
+                cached_location_lookup(location, "sunrise", date=date, local=True)
+                for date in dates
+            ]
+            df["_sunset"] = [
+                cached_location_lookup(location, "sunset", date=date, local=True)
+                for date in dates
+            ]
+            df["_dawn"] = [
+                cached_location_lookup(location, "dawn", date=date, local=True)
+                for date in dates
+            ]
+            df["_dusk"] = [
+                cached_location_lookup(location, "dusk", date=date, local=True)
+                for date in dates
+            ]
+            df["_light"] = (df["_sunrise"] <= df["_local_datetime"]) & (
+                df["_local_datetime"] <= df["_sunset"]
+            )
+            df["_dark"] = (df["_local_datetime"] < df["_dawn"]) | (
+                df["_local_datetime"] >= df["_dusk"]
+            )
+            df["_gray"] = ~(df["_light"] | df["_dark"])
+            df["light"] = (df["_light"]).astype(int)
+            return df
+
         def convert_to_dusk(value):
             light_aware_date_time = LightAwareDatetime(value, self.location)
             return self.location.dusk(date=light_aware_date_time.date)
 
         import time
+
         start = time.time()
 
         def timecheck(note=None):
@@ -123,8 +174,7 @@ class VODModel:
             df.rename(columns={self.datetime_column: "datetime"}, inplace=True)
 
         timecheck("Before dropping na rows")
-        df.dropna(how="any", subset=["datetime", self.target_column],
-                  inplace=True)
+        df.dropna(how="any", subset=["datetime", self.target_column], inplace=True)
         timecheck("After dropping na rows")
 
         # set index to datetime
@@ -152,7 +202,8 @@ class VODModel:
         timecheck("After converting to target group")
 
         timecheck("Before converting to light")
-        df["light"] = df["datetime"].apply(convert_to_light)
+        df = convert_to_light_vector(df, "datetime", self.location.location)
+        # df["light"] = df["datetime"].apply(convert_to_light)
         if debug:
             df["dusk"] = df["datetime"].apply(convert_to_dusk)
         timecheck("After converting to light")
@@ -174,8 +225,7 @@ class VODModel:
         df["time_in_seconds"] = df["datetime"].apply(time_in_seconds)
 
         if self.officer_id_column:
-            df.rename(columns={self.officer_id_column: "officerid"},
-                      inplace=True)
+            df.rename(columns={self.officer_id_column: "officerid"}, inplace=True)
             df.officerid = df.officerid.apply(str)
 
         return df
@@ -188,14 +238,16 @@ class VODModel:
         tz = pytz.timezone(self.location.timezone)
 
         # Set the unique set of years in our data frame.
-        years = set(pd.unique(df.datetime.apply(lambda dt: dt.year)))
+        years = df.datetime.dt.year.unique()
 
         # Get the DST transition dates for those years.
         dst_transition_dates = [
-            dt for dt in tz._utc_transition_times if dt.year in years]
+            dt for dt in tz._utc_transition_times if dt.year in years
+        ]
 
         in_dates = df.datetime.apply(
-            lambda dt: within_dst_range(dt, dst_transition_dates))
+            lambda dt: within_dst_range(dt, dst_transition_dates)
+        )
 
         df = df[in_dates]
         if df.empty:
@@ -209,33 +261,30 @@ class VODModel:
         max_twilight = max(dusks)
 
         df = df.iloc[
-            df.index.indexer_between_time(min_twilight,
-                                          max_twilight,
-                                          include_end=True)]
+            df.index.indexer_between_time(min_twilight, max_twilight, include_end=True)
+        ]
         if df.empty:
             raise EmptyModel
 
         return df.copy()
 
     def _strip_non_evening_hours(self, df):
-        years = pd.unique(df.datetime.dropna().apply(lambda dt: dt.year))
+        years = df.datetime.dropna().dt.year.unique()
         min_year = min(years)
         max_year = max(years)
         if min_year > max_year - 5:
             min_year = max_year - 5
-        min_twilight, max_twilight = self.find_twilight_range(min_year,
-                                                              max_year)
+        min_twilight, max_twilight = self.find_twilight_range(min_year, max_year)
         df = df.iloc[
-            df.index.indexer_between_time(min_twilight,
-                                          max_twilight,
-                                          include_end=True)]
+            df.index.indexer_between_time(min_twilight, max_twilight, include_end=True)
+        ]
         if df.empty:
             raise EmptyModel
 
         return df.copy()
 
     def _strip_grey_hours(self, df):
-        df = df[df.light != -1]
+        df = df[~df["_gray"]]
         if df.empty:
             raise EmptyModel
         return df.copy()
@@ -248,12 +297,14 @@ from functools import lru_cache
 
 class Location:
     def __init__(self, latitude, longitude, **kwargs):
-        location_tuple = (kwargs.get('name'),
-                          kwargs.get('region'),
-                          latitude,
-                          longitude,
-                          kwargs.get('timezone'),
-                          kwargs.get('elevation'))
+        location_tuple = (
+            kwargs.get("name"),
+            kwargs.get("region"),
+            latitude,
+            longitude,
+            kwargs.get("timezone"),
+            kwargs.get("elevation"),
+        )
         self.has_elevation = "elevation" in kwargs
         self.has_timezone = "timezone" in kwargs
 
@@ -283,25 +334,28 @@ class Location:
 
     @classmethod
     def geolocate(cls, name):
-        results = googlemaps.geocoding.geocode(GMaps,
-                                               address=name)
+        results = googlemaps.geocoding.geocode(GMaps, address=name)
 
-        locations = [Location(latitude=result['geometry']['location']['lat'],
-                              longitude=result["geometry"]['location']["lng"],
-                              name=result['formatted_address'])
-                     for result in results
-                     if "locality" in result["types"]
-                     or "administrative_area_level_3" in result["types"]]
+        locations = [
+            Location(
+                latitude=result["geometry"]["location"]["lat"],
+                longitude=result["geometry"]["location"]["lng"],
+                name=result["formatted_address"],
+            )
+            for result in results
+            if "locality" in result["types"]
+            or "administrative_area_level_3" in result["types"]
+        ]
 
         return locations
 
     @property
     def timezone(self):
         if not self.has_timezone:
-            result = googlemaps.timezone.timezone(GMaps,
-                                                  (self.latitude,
-                                                   self.longitude))
-            self.location.timezone = result['timeZoneId']
+            result = googlemaps.timezone.timezone(
+                GMaps, (self.latitude, self.longitude)
+            )
+            self.location.timezone = result["timeZoneId"]
             self.has_timezone = True
 
         return self.location.timezone
@@ -309,10 +363,10 @@ class Location:
     @property
     def elevation(self):
         if not self.has_elevation:
-            results = googlemaps.elevation.elevation(GMaps,
-                                                     (self.latitude,
-                                                      self.longitude))
-            self.location.elevation = results[0]['elevation']
+            results = googlemaps.elevation.elevation(
+                GMaps, (self.latitude, self.longitude)
+            )
+            self.location.elevation = results[0]["elevation"]
             self.has_elevation = True
 
         return self.location.elevation
@@ -321,8 +375,7 @@ class Location:
         if not type(self) == type(other):
             return False
 
-        return self.latitude == other.latitude and \
-               self.longitude == other.longitude
+        return self.latitude == other.latitude and self.longitude == other.longitude
 
     def as_dict(self):
         return {
@@ -339,6 +392,9 @@ class Location:
 
 
 class LightAwareDatetime:
+
+    __slots__ = ("location", "datetime", "date")
+
     def __init__(self, datetime, location):
         self.location = location
 
@@ -349,8 +405,7 @@ class LightAwareDatetime:
         self.date = self.datetime.date()
 
     def is_light(self):
-        sunrise = self.location.sunrise(local=True,
-                                        date=self.date)
+        sunrise = self.location.sunrise(local=True, date=self.date)
         sunset = self.location.sunset(local=True, date=self.date)
         return sunrise <= self.datetime <= sunset
 
@@ -361,10 +416,8 @@ class LightAwareDatetime:
 
     def is_twilight(self):
         dawn = self.location.dawn(local=True, date=self.date)
-        sunrise = self.location.sunrise(local=True,
-                                        date=self.date)
+        sunrise = self.location.sunrise(local=True, date=self.date)
         sunset = self.location.sunset(local=True, date=self.date)
         dusk = self.location.dusk(local=True, date=self.date)
 
-        return (dawn <= self.datetime < sunrise) or \
-               (sunset <= self.datetime < dusk)
+        return (dawn <= self.datetime < sunrise) or (sunset <= self.datetime < dusk)
