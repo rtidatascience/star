@@ -323,14 +323,22 @@ def analyze():
     try:
         analysis = Analysis()
         results = analysis.analyze(model.data_frame)
-    except Exception:
-        results = {
-            "error": "We ran into some trouble while analyzing your data. "
-            "This can be caused by having too little data. We've "
-            "recorded the error and will investigate it further. If "
-            "you have any questions, please email toolhelp@rti.org."
-        }
-        sentry.captureException(extra=session)
+    except Exception as e:
+        # Using singular matrix because some datasets are complete enough
+        # to preform analysis (ie. +/- 30 days NOT checked)
+        if (str(e) == "Singular matrix"):
+            results = {
+                "error": "Please use a larger dataset to preform the analysis."
+                " If you have any questions, please email toolhelp@rti.org."
+            }
+        else:
+            results = {
+                "error": "We ran into some trouble while analyzing your data. "
+                "This can be caused by having too little data. We've "
+                "recorded the error and will investigate it further. If "
+                "you have any questions, please email toolhelp@rti.org."
+            }
+            sentry.captureException(extra=session)
 
     min_twilight, max_twilight = model.find_twilight_range()
     itp_range = "{} - {}".format(
