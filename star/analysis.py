@@ -81,7 +81,7 @@ class Analysis:
                 officer_formula,
                 "officerid",
                 df,
-                family=sm.families.Binomial(sm.families.links.logit),
+                family=sm.families.Binomial(sm.families.links.logit()),
                 cov_struct=sm.cov_struct.Exchangeable(),
             )
 
