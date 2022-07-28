@@ -174,52 +174,54 @@
             <div class="mt-2"><small>{{ results.model_summary_html|safe }}</small></div>
         </div>
     </div>
-    <h3>Get an email of your report</h3>
+    <div style="display: none;">
+        <h3>Get an email of your report</h3>
 
-    <p>Would you like to get an email of your report? Enter your email
-        below.</p>
+        <p>Would you like to get an email of your report? Enter your email
+            below.</p>
 
-    <div class="row">
-        <form action="{{ url_for('star.email') }}" method="POST">
-            <div class="form-group">
-                <label class="fs-5 fw-bold" for="email_input">Email</label>
-                <input type="email" class="form-control my-3"
-                        required="required"
-                        id="email_input"
-                        name="email"/>
-            </div>
-            <div class="checkbox">
-                <label class="fs-5" for="optin_input">
-                    <input class="form-check-input" type="checkbox" id="optin_input" name="optin"
-                            checked="checked" />
-                    I would like to receive follow-up emails from RTI
-                    about criminal justice.
-                </label>
-            </div>
-            <div class="form-group">
-                <label class="fs-5 fw-bold mt-4" for="title_input">Title (optional)</label>
-                <input type="text" class="form-control my-3"
-                        id="title_input"
-                        name="title"/>
-            </div>
-            <div class="form-group">
-                <label class="fs-5 fw-bold" for="name_input">Name (optional)</label>
-                <input type="text" class="form-control my-3"
-                        id="name_input"
-                        name="name"/>
-            </div>
-            <div class="form-group">
-                <label class="fs-5 fw-bold" for="organization_input">Organization (optional)</label>
-                <input type="text" class="form-control my-3"
-                        id="organization_input"
-                        name="organization"/>
-            </div>
-            <p>
-                <button type="submit" class="btn btn-primary mt-2 mb-3">
-                    Get your report
-                </button>
-            </p>
-        </form>
+        <div class="row">
+            <form action="{{ url_for('star.email') }}" method="POST">
+                <div class="form-group">
+                    <label class="fs-5 fw-bold" for="email_input">Email</label>
+                    <input type="email" class="form-control my-3"
+                            required="required"
+                            id="email_input"
+                            name="email"/>
+                </div>
+                <div class="checkbox">
+                    <label class="fs-5" for="optin_input">
+                        <input class="form-check-input" type="checkbox" id="optin_input" name="optin"
+                                checked="checked" />
+                        I would like to receive follow-up emails from RTI
+                        about criminal justice.
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="fs-5 fw-bold mt-4" for="title_input">Title (optional)</label>
+                    <input type="text" class="form-control my-3"
+                            id="title_input"
+                            name="title"/>
+                </div>
+                <div class="form-group">
+                    <label class="fs-5 fw-bold" for="name_input">Name (optional)</label>
+                    <input type="text" class="form-control my-3"
+                            id="name_input"
+                            name="name"/>
+                </div>
+                <div class="form-group">
+                    <label class="fs-5 fw-bold" for="organization_input">Organization (optional)</label>
+                    <input type="text" class="form-control my-3"
+                            id="organization_input"
+                            name="organization"/>
+                </div>
+                <p>
+                    <button type="submit" class="btn btn-primary mt-2 mb-3">
+                        Get your report
+                    </button>
+                </p>
+            </form>
+        </div>
     </div>
     <script>
         let buttons = ['moreOnStatisticalSignificance-btn', 'resourcesForUnderstandingRisk-btn', 'dataStatisticalTestDetails-btn']
