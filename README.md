@@ -47,6 +47,49 @@ To run all tests, run:
     py.test
 
 
+Deployment
+-------------
+
+**Note**: You need credentials on `cds-mallard` and to be able to ssh into it. You will also need the cfs-production's user/host and the key saved in `~/.ssh/cfs-production-admin.pem`.
+
+To deploy the app, do the following steps:
+
+- ssh into mallard: `ssh <USER>@<CDS_MALLARD_HOST>`
+- `sudo su gitlab-runner`
+- ssh into cfs-production: `ssh -i ~/.ssh/cfs-production-admin.pem <CFS_PRODUCTION_USER>@<CFS_PRODUCTION_HOST>`
+- Go to the `rti-star` directory: `cd rti-star`
+- Review the current image's tag in the `docker-compose.yml` file: `cat docker-compose.yml`
+    - Look for the image specified and see which tag `rti-star` has:
+    ```yml
+    services:
+    app:
+        image: rti-star:<TAG_NUMBER>
+    ...
+    ```
+- Confirm there is a backup of this image in the `backup` folder: `cd backup && ls`
+    - There should be a `rti-star<TAG_NUMBER>.tar.gz`
+    - If there is not, then from the `rti-star` directory run `docker save rti-star:<TAG_NUMBER> | gzip > backup/rti-star<TAG_NUMBER>.tar.gz`
+
+- From your local environment, save the updated docker image: `docker save rt-star:<NEW_TAG_NUMBER> | gzip > rti-star<NEW_TAG_NUMBER>.tar.gz`
+    - (`NEW_TAG_NUMBER` = 1 + `TAG_NUMBER`)
+- scp the new image to mallard: `scp path/to/rti-star<NEW_TAG_NUMBER>.tar.gz <USER>@<CDS_MALLARD_HOST>:~/`
+- ssh into mallard: `ssh <USER>@<CDS_MALLARD_HOST>`
+- `sudo su gitlab-runner`
+- scp the new image to cfs-production: `sudo scp -i ~/.ssh/cfs-production-admin.pem rti-star<NEW_TAG_NUMBER>.tar.gz <CFS_PRODUCTION_USER>@<CFS_PRODUCTION_HOST>:~/rti-star/backup`
+- ssh into cfs-production: `ssh -i ~/.ssh/cfs-production-admin.pem <CFS_PRODUCTION_USER>@<CFS_PRODUCTION_HOST>`
+- Go to the `rti-star` directory: `cd rti-star`
+- Load the new image: `docker load --input backup/rti-star<NEW_TAG_NUMBER>.tar.gz`
+- `docker-compose down`
+- Update the `docker-compose.yml` file to the new tag: `vi docker-compose.yml`:
+    ```yml
+    services:
+    app:
+        image: rti-star:<NEW_TAG_NUMBER>
+    ...
+    ```
+- `docker-compose up - d`
+
+
 Licensing
 ---------
 This software is released under the BSD 3-Clause License with the exception of 
