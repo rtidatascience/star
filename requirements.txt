@@ -1,5 +1,7 @@
 # Everything needed in production
 
+itsdangerous==2.0.1
+
 # Flask
 Flask<=1.0
 Jinja2==3.0.1
