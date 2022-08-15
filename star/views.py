@@ -135,6 +135,75 @@ def clear_session(step):
         session.pop(step, None)
 
 
+def render_pdf_report():
+    """Renders the current analysis summary as a PDF saved to a temp directory.
+
+    :returns: The filepath of the rendered PDF.
+    """
+    location = get_location()
+    path = get_file()
+    filename = session["original_filename"]
+    cols = get_columns()
+    options = get_options()
+    df = load_csv_as_dataframe(path, cols)
+
+    model = VODModel(df, location=location, columns=cols, options=options)
+    analysis = Analysis()
+    results = analysis.analyze(model.data_frame)
+    min_twilight, max_twilight = model.find_twilight_range()
+    itp_range = "{} - {}".format(
+        min_twilight.strftime("%H:%M:%S"), max_twilight.strftime("%H:%M:%S")
+    )
+
+    min_date, max_date = model.find_date_range()
+    date_range = "{} - {}".format(min_date.strftime("%x"), max_date.strftime("%x"))
+
+    params = dict(
+        datetime=datetime.now().strftime("%x %X %Z"),
+        location=location,
+        original_filename=filename,
+        cols=cols,
+        options=options,
+        original_record_count=len(df.index),
+        final_record_count=len(model.data_frame.index),
+        date_range=date_range,
+        itp_range=itp_range,
+        light_count=model.light_count(),
+        dark_count=model.dark_count(),
+        results=results,
+        root_dir=current_app.config["ROOT_DIR"],
+    )
+
+    pdf_html = render_template("summary_report.html", **params)
+
+    pdf_options = {
+        "page-size": "Letter",
+        "margin-top": "0.75in",
+        "margin-right": "0.75in",
+        "margin-bottom": "0.75in",
+        "margin-left": "0.75in",
+        "encoding": "UTF-8",
+        "enable-local-file-access": None
+    }
+
+    tmp_directory = tempfile.mkdtemp()
+    
+    try:
+        filename = (
+            os.path.splitext(session["original_filename"])[0]
+            + "-summary_report.pdf"
+        )
+    except Exception:
+        filename = "summary_report.pdf"
+
+    pdf_filepath = os.path.join(tmp_directory, filename)
+
+    # Generate the PDF 
+    pdfkit.from_string(pdf_html, pdf_filepath, options=pdf_options)
+
+    return pdf_filepath
+
+
 @star.route("/")
 def index():
     return render_template("index.html")
@@ -364,8 +433,8 @@ def analyze():
 
 
 # Step 6
-@star.route("/download/", methods=["GET"])
-def download():
+@star.route("/download_analysis/", methods=["GET"])
+def download_analysis():
     location = get_location()
     path = get_file()
     cols = get_columns()
@@ -397,13 +466,6 @@ def download():
 
 @star.route("/email/", methods=["POST"])
 def email():
-    location = get_location()
-    path = get_file()
-    filename = session["original_filename"]
-    cols = get_columns()
-    options = get_options()
-    df = load_csv_as_dataframe(path, cols)
-
     email = request.form.get("email")
     if not email:
         flash("Email is required.", category="danger")
@@ -426,50 +488,7 @@ def email():
     )
     db.commit()
 
-    model = VODModel(df, location=location, columns=cols, options=options)
-    analysis = Analysis()
-    results = analysis.analyze(model.data_frame)
-    min_twilight, max_twilight = model.find_twilight_range()
-    itp_range = "{} - {}".format(
-        min_twilight.strftime("%H:%M:%S"), max_twilight.strftime("%H:%M:%S")
-    )
-
-    min_date, max_date = model.find_date_range()
-    date_range = "{} - {}".format(min_date.strftime("%x"), max_date.strftime("%x"))
-
-    params = dict(
-        datetime=datetime.now().strftime("%x %X %Z"),
-        location=location,
-        original_filename=filename,
-        cols=cols,
-        options=options,
-        original_record_count=len(df.index),
-        final_record_count=len(model.data_frame.index),
-        date_range=date_range,
-        itp_range=itp_range,
-        light_count=model.light_count(),
-        dark_count=model.dark_count(),
-        results=results,
-        root_dir=current_app.config["ROOT_DIR"],
-    )
-
-    pdf_html = render_template("email.html", **params)
-
-    # return pdf_html
-
-    options = {
-        "page-size": "Letter",
-        "margin-top": "0.75in",
-        "margin-right": "0.75in",
-        "margin-bottom": "0.75in",
-        "margin-left": "0.75in",
-        "encoding": "UTF-8",
-        "enable-local-file-access": None
-    }
-
-    directory = tempfile.mkdtemp()
-    pdffile = os.path.join(directory, "out.pdf")
-    pdf = pdfkit.from_string(pdf_html, pdffile, options=options)
+    pdffile = render_pdf_report()
 
     msg = Message("RTI-STAR Report for {}".format(name or email), recipients=[email])
     msg.body = "Your report is attached."
@@ -486,3 +505,12 @@ def flash_errors(form, category="warning"):
     for field, errors in form.errors.items():
         for error in errors:
             flash("{0} - {1}".format(getattr(form, field).label.text, error), category)
+
+
+@star.route("/download_report/", methods=["GET"])
+def download_report():
+    """Directly downloads the analysis summary as a PDF."""
+    pdf_file = render_pdf_report()
+
+    return send_file(pdf_file, mimetype="application/pdf",
+                     as_attachment=True, attachment_filename=pdf_file)
