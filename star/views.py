@@ -512,5 +512,13 @@ def download_report():
     """Directly downloads the analysis summary as a PDF."""
     pdf_file = render_pdf_report()
 
+    try:
+        filename = (
+            os.path.splitext(session["original_filename"])[0]
+            + "-summary_report.pdf"
+        )
+    except Exception:
+        filename = "summary_report.pdf"
+
     return send_file(pdf_file, mimetype="application/pdf",
-                     as_attachment=True, attachment_filename=pdf_file)
+                     as_attachment=True, attachment_filename=filename)
