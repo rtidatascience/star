@@ -56,10 +56,10 @@
         <a class="btn btn-outline-primary" data-toggle="collapse" role="button" data-target="#dataStatisticalTestDetails" aria-selected="false" aria-controls="dataStatisticalTestDetails" id="dataStatisticalTestDetails-btn" onclick="selectActive('dataStatisticalTestDetails-btn')">
             Data & Statistical Test Details
         </a>
-        <a class="btn btn-outline-primary my-2" type="button" data-toggle="tooltip" data-placement="top" title="Download CSV File used for analysis" href="{{ url_for('star.download_analysis') }}">
+        <a class="btn btn-outline-primary my-2" data-toggle="tooltip" role="button" data-placement="top" title="Download CSV File used for analysis" href="{{ url_for('star.download_analysis') }}">
             ⬇️ &nbsp;Download Analysis Data
         </a>
-        <a class="btn btn-outline-primary my-2" type="button" data-toggle="tooltip" data-placement="top" title="Download Summary Report" href="{{ url_for('star.download_report') }}">
+        <a class="btn btn-outline-primary my-2" data-toggle="tooltip"  role="button" data-placement="top" title="Download Summary Report" href="{{ url_for('star.download_report') }}">
             ⬇️ &nbsp;Download Summary Report
         </a>
     </div>
