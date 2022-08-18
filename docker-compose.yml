@@ -6,3 +6,4 @@ services:
       - "0.0.0.0:5000:5000"
     volumes:
       - .:/app
+    platform: linux/amd64
