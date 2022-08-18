@@ -70,12 +70,14 @@ To deploy the app, do the following steps:
     - There should be a `rti-star<TAG_NUMBER>.tar.gz`
     - If there is not, then from the `rti-star` directory run `docker save rti-star:<TAG_NUMBER> | gzip > backup/rti-star<TAG_NUMBER>.tar.gz`
 
-- From your local environment, save the updated docker image: `docker save rt-star:<NEW_TAG_NUMBER> | gzip > rti-star<NEW_TAG_NUMBER>.tar.gz`
+- From your local environment, build the image if you haven't already: `docker-compose build`
+- give the image the appropriate name and tag: `docker tag star_app rti-star:<NEW_TAG_NUMBER>`
+- save the updated docker image: `docker save rti-star:<NEW_TAG_NUMBER> | gzip > rti-star<NEW_TAG_NUMBER>.tar.gz`
     - (`NEW_TAG_NUMBER` = 1 + `TAG_NUMBER`)
 - scp the new image to mallard: `scp path/to/rti-star<NEW_TAG_NUMBER>.tar.gz <USER>@<CDS_MALLARD_HOST>:~/`
 - ssh into mallard: `ssh <USER>@<CDS_MALLARD_HOST>`
-- `sudo su gitlab-runner`
 - scp the new image to cfs-production: `sudo scp -i ~/.ssh/cfs-production-admin.pem rti-star<NEW_TAG_NUMBER>.tar.gz <CFS_PRODUCTION_USER>@<CFS_PRODUCTION_HOST>:~/rti-star/backup`
+- `sudo su gitlab-runner`
 - ssh into cfs-production: `ssh -i ~/.ssh/cfs-production-admin.pem <CFS_PRODUCTION_USER>@<CFS_PRODUCTION_HOST>`
 - Go to the `rti-star` directory: `cd rti-star`
 - Load the new image: `docker load --input backup/rti-star<NEW_TAG_NUMBER>.tar.gz`
