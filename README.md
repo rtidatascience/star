@@ -76,8 +76,8 @@ To deploy the app, do the following steps:
 - save the updated docker image: `docker save rti-star:<NEW_TAG_NUMBER> | gzip > rti-star<NEW_TAG_NUMBER>.tar.gz`
 - scp the new image to mallard: `scp path/to/rti-star<NEW_TAG_NUMBER>.tar.gz <USER>@<CDS_MALLARD_HOST>:~/`
 - ssh into mallard: `ssh <USER>@<CDS_MALLARD_HOST>`
-- scp the new image to cfs-production: `sudo scp -i ~/.ssh/cfs-production-admin.pem rti-star<NEW_TAG_NUMBER>.tar.gz <CFS_PRODUCTION_USER>@<CFS_PRODUCTION_HOST>:~/rti-star/backup`
 - `sudo su gitlab-runner`
+- scp the new image to cfs-production: `sudo scp -i ~/.ssh/cfs-production-admin.pem rti-star<NEW_TAG_NUMBER>.tar.gz <CFS_PRODUCTION_USER>@<CFS_PRODUCTION_HOST>:~/rti-star/backup`
 - ssh into cfs-production: `ssh -i ~/.ssh/cfs-production-admin.pem <CFS_PRODUCTION_USER>@<CFS_PRODUCTION_HOST>`
 - Go to the `rti-star` directory: `cd rti-star`
 - Load the new image: `docker load --input backup/rti-star<NEW_TAG_NUMBER>.tar.gz`
