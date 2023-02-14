@@ -89,7 +89,7 @@ To deploy the app, do the following steps:
         image: rti-star:<NEW_TAG_NUMBER>
     ...
     ```
-- `docker-compose up - d`
+- `docker-compose up -d`
 
 
 Licensing
