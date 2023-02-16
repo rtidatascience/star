@@ -21,7 +21,7 @@ dateparser==0.3.2
 googlemaps==2.4.2
 astral==0.9
 scipy==1.7.3
-werkzeug==2.0.1
+werkzeug==2.2.3
 
 # Management script
 Flask-Script
